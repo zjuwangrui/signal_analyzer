@@ -1,19 +1,42 @@
+from __future__ import annotations
+
+from typing import TypedDict
+
 import librosa
 import librosa.display
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from numpy.typing import NDArray
+
 from ..utils.helpers import fig_to_base64
 from .stft_analyzer import stft
 
-def analyze_signal_data(filepath, params):
+FloatArray = NDArray[np.float64]
+
+
+class AnalysisParams(TypedDict):
+    sr: int
+    n_fft: int
+    hop_length: int
+    cmap: str
+
+
+class AnalysisPlots(TypedDict):
+    waveform: str
+    spectrogram: str
+    spectrum: str
+
+
+def analyze_signal_data(filepath: str, params: AnalysisParams) -> AnalysisPlots:
     """
     Loads an audio file and generates waveform, spectrogram, and spectrum plots.
-    
+
     :param filepath: Path to the audio file.
     :param params: A dictionary of analysis parameters.
     :return: A dictionary containing base64 encoded plot images.
     """
-    y, sr_loaded = librosa.load(filepath, sr=params['sr'])
+    y_raw, sr_loaded = librosa.load(filepath, sr=params["sr"])
+    y: FloatArray = np.asarray(y_raw, dtype=np.float64)
 
     # 1. Time-domain waveform
     fig_time, ax_time = plt.subplots(figsize=(10, 4))
@@ -24,13 +47,29 @@ def analyze_signal_data(filepath, params):
     img_time = fig_to_base64(fig_time)
 
     # 2. Spectrogram using the custom STFT
-    D = stft(y, n_fft=params['n_fft'], hop_length=params['hop_length'], win_length=params['win_length'], window=params['window'])
-    S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+    frequencies, times, spectrum = stft(
+        y,
+        fs=float(sr_loaded),
+        window_size=params["n_fft"],
+        frame_shift=params["hop_length"],
+    )
+    positive_bin_count = params["n_fft"] // 2 + 1
+    positive_frequencies = frequencies[:positive_bin_count]
+    magnitude = np.abs(spectrum[:positive_bin_count, :])
+    S_db = librosa.amplitude_to_db(magnitude, ref=np.max)
     fig_spec, ax_spec = plt.subplots(figsize=(10, 4))
-    img = librosa.display.specshow(S_db, sr=sr_loaded, hop_length=params['hop_length'], 
-                                   x_axis='time', y_axis='log', ax=ax_spec, cmap=params['cmap'])
-    fig_spec.colorbar(img, ax=ax_spec, format='%+2.0f dB')
-    ax_spec.set_title('Spectrogram')
+    img = ax_spec.pcolormesh(
+        times,
+        positive_frequencies,
+        S_db,
+        shading="auto",
+        cmap=params["cmap"],
+    )
+    ax_spec.set_title("Spectrogram")
+    ax_spec.set_xlabel("Time (s)")
+    ax_spec.set_ylabel("Frequency (Hz)")
+    ax_spec.set_ylim(0, sr_loaded / 2)
+    fig_spec.colorbar(img, ax=ax_spec, format="%+2.0f dB")
     img_spectrogram = fig_to_base64(fig_spec)
 
     # 3. Spectrum Plot
@@ -47,5 +86,5 @@ def analyze_signal_data(filepath, params):
     return {
         "waveform": img_time,
         "spectrogram": img_spectrogram,
-        "spectrum": img_spectrum
+        "spectrum": img_spectrum,
     }

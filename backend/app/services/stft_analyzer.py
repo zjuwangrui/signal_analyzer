@@ -1,48 +1,52 @@
+from __future__ import annotations
+
 import numpy as np
-from scipy.signal import get_window
+from numpy.typing import ArrayLike, NDArray
 
-def stft(y, n_fft=2048, hop_length=512, win_length=None, window='hann'):
+FloatArray = NDArray[np.float64]
+ComplexArray = NDArray[np.complex128]
+
+
+def stft(
+    signal: ArrayLike,
+    fs: float,
+    window_size: int,
+    frame_shift: int | None = None,
+) -> tuple[FloatArray, FloatArray, ComplexArray]:
     """
-    Short-Time Fourier Transform (STFT).
-    
-    A manual implementation of STFT.
-    
-    :param y: Input signal (1D numpy array).
-    :param n_fft: FFT window size.
-    :param hop_length: Hop length between successive frames.
-    :param win_length: Each frame of audio is windowed by `window` of length `win_length` and then padded with zeros to match `n_fft`. Defaults to `n_fft`.
-    :param window: The window function to use. See `scipy.signal.get_window`.
-    :return: A complex-valued matrix D such that D[f, t] is the FFT of frame t at frequency f.
+    Compute STFT with manual framing, rectangular windowing, and per-frame FFT.
+
+    This mirrors the project-level ``stft_analyzer.py`` implementation:
+    no centered padding, full FFT output, and a rectangular analysis window.
+    ``frame_shift`` defaults to half-window overlap.
     """
-    if win_length is None:
-        win_length = n_fft
+    samples: FloatArray = np.asarray(signal, dtype=np.float64).reshape(-1)
+    if samples.size == 0:
+        raise ValueError("Input signal must not be empty.")
+    if fs <= 0:
+        raise ValueError("Sampling rate must be positive.")
+    if window_size <= 0:
+        raise ValueError("Window size must be positive.")
+    if window_size > samples.size:
+        raise ValueError("Window size must not exceed signal length.")
 
-    # Get the window function
-    fft_window = get_window(window, win_length)
+    if frame_shift is None:
+        frame_shift = max(window_size // 2, 1)
+    if frame_shift <= 0:
+        raise ValueError("Frame shift must be positive.")
 
-    # Pad the window to n_fft size if necessary
-    pad_len = n_fft - win_length
-    if pad_len < 0:
-        raise ValueError("win_length must be smaller than n_fft")
-    
-    fft_window = np.pad(fft_window, (0, pad_len), mode='constant')
+    nfft = window_size
+    num_frames = (samples.size - window_size) // frame_shift + 1
+    window = np.ones(window_size, dtype=np.float64)
 
-    # Pad the signal to ensure all frames are centered
-    y = np.pad(y, int(n_fft // 2), mode='reflect')
+    spectrum = np.zeros((nfft, num_frames), dtype=np.complex128)
+    frequencies = np.arange(nfft, dtype=np.float64) * fs / nfft
 
-    # Calculate the number of frames
-    n_frames = 1 + int((len(y) - n_fft) / hop_length)
-    
-    # Initialize the STFT matrix
-    stft_matrix = np.empty((1 + n_fft // 2, n_frames), dtype=np.complex64, order='F')
+    for frame_index in range(num_frames):
+        start_index = frame_index * frame_shift
+        end_index = start_index + window_size
+        frame = samples[start_index:end_index] * window
+        spectrum[:, frame_index] = np.fft.fft(frame, n=nfft)
 
-    # Iterate over frames
-    for t in range(n_frames):
-        start = t * hop_length
-        frame = y[start : start + n_fft]
-        
-        # Window the frame and compute FFT
-        windowed_frame = frame * fft_window
-        stft_matrix[:, t] = np.fft.rfft(windowed_frame)
-
-    return stft_matrix
+    times = (np.arange(num_frames, dtype=np.float64) * frame_shift + window_size / 2) / fs
+    return frequencies, times, spectrum
