@@ -85,13 +85,33 @@ const analyzeSignal = async () => {
 </script>
 
 <style>
+:root {
+  --dark-blue-bg: #0a192f;
+  --light-blue-panel: #112240;
+  --accent-blue: #42a5f5;
+  --accent-cyan: #64ffda;
+  --text-light: #ccd6f6;
+  --text-dark: #8892b0;
+  --border-color: #233554;
+}
+
+body {
+  background-color: var(--dark-blue-bg);
+  color: var(--text-light);
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 40px;
+}
+
+h1 {
+  color: var(--accent-cyan);
+  font-weight: 600;
+  letter-spacing: 1.5px;
 }
 
 .main-layout {
@@ -104,12 +124,20 @@ const analyzeSignal = async () => {
 .controls-panel {
   flex: 1;
   max-width: 300px;
+  background-color: var(--light-blue-panel);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
 }
 
 .plots-panel {
   flex: 3;
   position: relative;
   min-height: 400px; /* Ensure it has some height */
+  background-color: var(--light-blue-panel);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
 }
 
 .loading-overlay {
@@ -118,16 +146,18 @@ const analyzeSignal = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(10, 25, 47, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 1.5em;
   z-index: 10;
+  color: var(--accent-cyan);
+  border-radius: 8px;
 }
 
 .placeholder-text {
-  color: #888;
+  color: var(--text-dark);
   font-size: 1.2em;
   margin-top: 50px;
 }

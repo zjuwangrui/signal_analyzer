@@ -18,24 +18,41 @@ defineProps<{
 
 <style scoped>
 .video-container {
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
   padding: 10px;
   margin-bottom: 10px;
   text-align: center;
+  background-color: var(--dark-blue-bg);
+  border-radius: 4px;
+}
+h4 {
+  color: var(--text-light);
 }
 video {
   max-width: 100%;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
 }
 .placeholder {
   height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #888;
-  border: 1px dashed #ccc;
+  color: var(--text-dark);
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
 }
 button {
   margin-top: 10px;
+  padding: 8px 15px;
+  background-color: var(--accent-blue);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #5cacee;
 }
 </style>

@@ -61,7 +61,7 @@ const tabs = [
 
 <style scoped>
 .tab-nav {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 10px;
 }
 .tab-nav button {
@@ -70,11 +70,16 @@ const tabs = [
   background-color: transparent;
   cursor: pointer;
   font-size: 16px;
+  color: var(--text-dark);
   border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+.tab-nav button:hover {
+  color: var(--accent-cyan);
 }
 .tab-nav button.active {
-  border-bottom-color: #42b983;
-  color: #42b983;
+  border-bottom-color: var(--accent-cyan);
+  color: var(--accent-cyan);
 }
 .tab-content {
   padding: 10px;

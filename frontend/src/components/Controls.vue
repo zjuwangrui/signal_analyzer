@@ -55,14 +55,45 @@ const applyChanges = () => {
 
 <style scoped>
 .controls {
-  border: 1px solid #ccc;
-  padding: 15px;
-  border-radius: 5px;
+  color: var(--text-light);
+}
+h3 {
+  color: var(--accent-cyan);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-top: 0;
 }
 .control-item {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 label {
-  margin-right: 10px;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: var(--text-dark);
+}
+input {
+  width: 100%;
+  padding: 8px;
+  background-color: var(--dark-blue-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-light);
+}
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--accent-blue);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #5cacee;
 }
 </style>

@@ -44,4 +44,27 @@ const uploadFile = async () => {
 .file-upload {
   margin-bottom: 20px;
 }
+input[type="file"] {
+  color: var(--text-dark);
+}
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: var(--accent-cyan);
+  border: none;
+  border-radius: 4px;
+  color: var(--dark-blue-bg);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #88ffee;
+}
+button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
 </style>
