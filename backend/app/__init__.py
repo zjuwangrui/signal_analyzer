@@ -23,6 +23,8 @@ def create_app():
 
     # Register blueprints
     from .api.signal import signal_bp
+    from .api.video import video_bp
     app.register_blueprint(signal_bp)
+    app.register_blueprint(video_bp)
 
     return app

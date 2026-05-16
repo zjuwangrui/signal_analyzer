@@ -1,6 +1,5 @@
 <template>
   <div class="video-container">
-    <h4>Spectrum Video</h4>
     <video v-if="videoUrl" :src="videoUrl" controls></video>
     <div v-else class="placeholder">No video to display</div>
     <a v-if="videoUrl" :href="videoUrl" download="spectrum_video.mp4">

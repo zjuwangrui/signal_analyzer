@@ -1,0 +1,11 @@
+2026-05-16 15:18:02,437 - INFO - generated new fontManager
+2026-05-16 15:21:13,524 - INFO - File 'self_songbie.mp3' uploaded successfully.
+2026-05-16 15:21:14,626 - INFO - Analyzing 'self_songbie.mp3' with params: {'sr': 22050, 'n_fft': 2048, 'hop_length': 512, 'cmap': 'viridis'}
+2026-05-16 15:21:18,887 - INFO - Successfully generated plots for 'self_songbie.mp3'.
+2026-05-16 15:21:18,903 - INFO - Started task 59424d4b-e65e-48b7-bb20-2ba23e6d165b for function create_spectrum_animation
+2026-05-16 15:21:20,608 - INFO - Loaded audio file 'uploads/self_songbie.mp3' with sample rate 44100 and 2560858 samples.
+2026-05-16 15:21:20,778 - INFO - Computed frame-wise FFT with n_fft=2048, hop_length=512. Result shape: (1025, 4998)
+2026-05-16 15:21:20,779 - INFO - Frequency range: 21.533203125 Hz to 22050.0 Hz
+2026-05-16 15:21:20,793 - INFO - Animation.save using <class 'matplotlib.animation.FFMpegWriter'>
+2026-05-16 15:21:20,794 - INFO - MovieWriter._run: running command: ffmpeg -f rawvideo -vcodec rawvideo -s 1200x700 -pix_fmt rgba -r 86 -loglevel error -i pipe: -vcodec h264 -pix_fmt yuv420p -y videos/spectrum_self_songbie.mp4
+2026-05-16 15:22:49,319 - INFO - Silent FFT spectrum animation saved to: videos/spectrum_self_songbie.mp4

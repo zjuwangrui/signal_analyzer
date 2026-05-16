@@ -58,29 +58,70 @@ const analyzeSignal = async () => {
 
   isLoading.value = true;
   analysisCompleted.value = false;
+  // Reset previous results
+  Object.assign(analysisResults, {
+    waveform: '', spectrogram: '', spectrum: '',
+    spectrogramVideo: '', spectrumVideo: ''
+  });
 
   try {
-    // For now, we only fetch images. Video endpoints will be added later.
-    const response = await axios.get(`http://localhost:5000/analyze/${uploadedFilename.value}`, {
+    // --- Trigger static image analysis ---
+    const imageResponse = await axios.get(`http://localhost:5000/analyze/${uploadedFilename.value}`, {
       params: analysisParams.value,
     });
-
-    const { waveform, spectrogram, spectrum } = response.data;
+    const { waveform, spectrogram, spectrum } = imageResponse.data;
     analysisResults.waveform = `data:image/png;base64,${waveform}`;
     analysisResults.spectrogram = `data:image/png;base64,${spectrogram}`;
     analysisResults.spectrum = `data:image/png;base64,${spectrum}`;
-    
-    // Placeholder for video URLs - will be updated when backend supports it
-    analysisResults.spectrogramVideo = ''; // e.g., 'http://localhost:5000/videos/spectrogram.mp4'
-    analysisResults.spectrumVideo = '';    // e.g., 'http://localhost:5000/videos/spectrum.mp4'
+    analysisCompleted.value = true; // Show static images immediately
 
-    analysisCompleted.value = true;
+    // --- Trigger video analysis (no need to await) ---
+    triggerVideoAnalysis();
+
   } catch (error) {
     console.error('Error analyzing signal:', error);
     alert('Error analyzing signal.');
   } finally {
     isLoading.value = false;
   }
+};
+
+const triggerVideoAnalysis = async () => {
+  if (!uploadedFilename.value) return;
+
+  try {
+    const videoResponse = await axios.post(`http://localhost:5000/analyze/spectrum_video/${uploadedFilename.value}`, analysisParams.value);
+    const { task_id } = videoResponse.data;
+    
+    // Start polling for task status
+    pollTaskStatus(task_id);
+
+  } catch (error) {
+    console.error('Error starting video analysis:', error);
+    // Optionally show a non-blocking error to the user
+  }
+};
+
+const pollTaskStatus = (taskId: string) => {
+  const interval = setInterval(async () => {
+    try {
+      const statusResponse = await axios.get(`http://localhost:5000/tasks/status/${taskId}`);
+      const { status, video_url, error } = statusResponse.data;
+
+      if (status === 'success') {
+        clearInterval(interval);
+        analysisResults.spectrumVideo = `http://localhost:5000${video_url}`;
+      } else if (status === 'failed') {
+        clearInterval(interval);
+        console.error(`Video generation task ${taskId} failed:`, error);
+        // Optionally update UI to show failure
+      }
+      // If status is 'running' or 'pending', do nothing and wait for the next poll.
+    } catch (err) {
+      clearInterval(interval);
+      console.error('Error polling task status:', err);
+    }
+  }, 3000); // Poll every 3 seconds
 };
 </script>
 
