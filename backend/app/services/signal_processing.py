@@ -4,6 +4,9 @@ from typing import TypedDict
 
 import librosa
 import librosa.display
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray

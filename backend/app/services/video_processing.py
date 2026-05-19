@@ -1,10 +1,17 @@
 import logging
 import os
+from typing import Callable, Union
+
 import librosa
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import LineCollection
+
+from .animation_rendering import build_frame_schedule
 
 def _build_rainbow_rain_segments(
     rng: np.random.Generator,
@@ -37,23 +44,28 @@ def create_spectrum_animation(
     input_path: str,
     output_dir: str,
     filename: str,
-    params: dict
+    params: dict,
+    progress_callback: Union[Callable[[float, str], None], None] = None,
 ) -> str:
     """Render a silent frame-wise FFT spectrum animation."""
     os.makedirs(output_dir, exist_ok=True)
 
-    sr = params.get('sr', 44100)
-    n_fft = params.get('n_fft', 2048)
-    hop_length = params.get('hop_length', 512)
+    sr = int(params.get('sr', 22050))
+    n_fft = int(params.get('n_fft', 2048))
+    hop_length = int(params.get('hop_length', 512))
     cmap = params.get('cmap', 'magma')
     fig_size = params.get('fig_size', (12, 7))
-    rain_alpha = params.get('rain_alpha', 0.8)
+    rain_alpha = float(params.get('rain_alpha', 0.8))
+    render_fps = float(params.get('render_fps', 12.0))
+    max_video_frames = int(params.get('max_video_frames', 900))
 
     if n_fft <= 0:
         raise ValueError("n_fft must be positive.")
     if hop_length <= 0:
         raise ValueError("hop_length must be positive.")
 
+    if progress_callback:
+        progress_callback(0.02, "Loading audio")
     y, sr = librosa.load(input_path, sr=sr)
     logging.info(f"Loaded audio file '{input_path}' with sample rate {sr} and {len(y)} samples.")
 
@@ -66,6 +78,8 @@ def create_spectrum_animation(
     spectrum_magnitude = np.zeros((positive_bin_count, num_frames), dtype=np.float64)
     window = np.ones(n_fft, dtype=np.float64)
 
+    if progress_callback:
+        progress_callback(0.08, "Computing frame-wise FFT")
     for frame_index in range(num_frames):
         start_index = frame_index * hop_length
         end_index = start_index + n_fft
@@ -132,18 +146,50 @@ def create_spectrum_animation(
         time_text.set_text(f"{current_time:.2f} s")
         return (line, rain_lines, time_text)
 
-    fps = sr / hop_length
+    source_fps = sr / hop_length
+    frame_schedule, output_fps, duration = build_frame_schedule(
+        source_frame_count=num_frames,
+        source_fps=source_fps,
+        requested_fps=render_fps,
+        max_frames=max_video_frames,
+    )
+    logging.info(
+        "Rendering FFT spectrum animation with %s/%s frames at %.2f fps (duration %.2fs).",
+        len(frame_schedule),
+        num_frames,
+        output_fps,
+        duration,
+    )
+    if progress_callback:
+        progress_callback(0.15, "Rendering FFT video")
+
     ani = animation.FuncAnimation(
         fig,
         update,
-        frames=num_frames,
+        frames=frame_schedule,
         blit=True,
-        interval=hop_length / sr * 1000,
+        interval=1000 / output_fps,
     )
 
     output_path = os.path.join(output_dir, filename)
-    ani.save(output_path, writer="ffmpeg", fps=int(fps))
-    plt.close(fig)
+    writer = animation.FFMpegWriter(
+        fps=max(1, int(round(output_fps))),
+        codec="h264",
+        extra_args=["-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "23"],
+    )
+
+    def save_progress(frame_number: int, total_frames: int) -> None:
+        if progress_callback and total_frames:
+            progress_callback(
+                0.15 + 0.83 * ((frame_number + 1) / total_frames),
+                f"Rendering FFT video {frame_number + 1}/{total_frames}",
+            )
+
+    try:
+        ani.save(output_path, writer=writer, progress_callback=save_progress)
+    finally:
+        plt.close(fig)
+
     logging.info(f"Silent FFT spectrum animation saved to: {output_path}")
     
     return output_path

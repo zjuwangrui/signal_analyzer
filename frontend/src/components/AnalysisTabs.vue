@@ -1,14 +1,11 @@
 <template>
   <div class="analysis-tabs">
-    <div class="tab-nav">
-      <button
-        v-for="tab in tabs"
-        :key="tab.id"
-        :class="{ active: activeTab === tab.id }"
-        @click="activeTab = tab.id"
-      >
-        {{ tab.name }}
-      </button>
+    <div class="tabs">
+      <button :class="{ active: activeTab === 'waveform' }" @click="activeTab = 'waveform'">Waveform</button>
+      <button :class="{ active: activeTab === 'spectrogram' }" @click="activeTab = 'spectrogram'">Spectrogram</button>
+      <button :class="{ active: activeTab === 'spectrum' }" @click="activeTab = 'spectrum'">Spectrum</button>
+      <button :class="{ active: activeTab === 'spectrumVideo' }" @click="activeTab = 'spectrumVideo'">Spectrum Video</button>
+      <button :class="{ active: activeTab === 'spectrogramVideo' }" @click="activeTab = 'spectrogramVideo'">Spectrogram Video</button>
     </div>
     <div class="tab-content">
       <div v-if="activeTab === 'waveform'">
@@ -20,68 +17,89 @@
       <div v-if="activeTab === 'spectrogram'">
         <SpectrogramPlot :plotUrl="analysisResults.spectrogram" />
       </div>
-      <div v-if="activeTab === 'spectrogramVideo'">
-        <SpectrogramVideo :videoUrl="analysisResults.spectrogramVideo" />
-      </div>
       <div v-if="activeTab === 'spectrumVideo'">
-        <SpectrumVideo :videoUrl="analysisResults.spectrumVideo" />
+        <SpectrumVideo
+          :videoUrl="analysisResults.spectrumVideoUrl"
+          :status="analysisResults.spectrumVideoStatus"
+          :progress="analysisResults.spectrumVideoProgress"
+          :message="analysisResults.spectrumVideoMessage"
+          :error="analysisResults.spectrumVideoError"
+        />
+      </div>
+      <div v-if="activeTab === 'spectrogramVideo'">
+        <SpectrogramVideo
+          :videoUrl="analysisResults.spectrogramVideoUrl"
+          :status="analysisResults.spectrogramVideoStatus"
+          :progress="analysisResults.spectrogramVideoProgress"
+          :message="analysisResults.spectrogramVideoMessage"
+          :error="analysisResults.spectrogramVideoError"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type PropType } from 'vue';
 import WaveformPlot from './WaveformPlot.vue';
-import SpectrumPlot from './SpectrumPlot.vue';
 import SpectrogramPlot from './SpectrogramPlot.vue';
-import SpectrogramVideo from './SpectrogramVideo.vue';
+import SpectrumPlot from './SpectrumPlot.vue';
 import SpectrumVideo from './SpectrumVideo.vue';
+import SpectrogramVideo from './SpectrogramVideo.vue';
 
-defineProps<{
+interface AnalysisResults {
+  waveform: string;
+  spectrogram: string;
+  spectrum: string;
+  spectrumVideoUrl: string;
+  spectrogramVideoUrl: string;
+  spectrumVideoStatus: string;
+  spectrogramVideoStatus: string;
+  spectrumVideoProgress: number;
+  spectrogramVideoProgress: number;
+  spectrumVideoMessage: string;
+  spectrogramVideoMessage: string;
+  spectrumVideoError: string;
+  spectrogramVideoError: string;
+}
+
+defineProps({
   analysisResults: {
-    waveform: string;
-    spectrum: string;
-    spectrogram: string;
-    spectrogramVideo: string;
-    spectrumVideo: string;
-  };
-}>();
+    type: Object as PropType<AnalysisResults>,
+    required: true,
+  },
+});
 
 const activeTab = ref('waveform');
-
-const tabs = [
-  { id: 'waveform', name: 'Time-Domain Waveform' },
-  { id: 'spectrum', name: 'Spectrum Plot' },
-  { id: 'spectrogram', name: 'Spectrogram Plot' },
-  { id: 'spectrogramVideo', name: 'Spectrogram Video' },
-  { id: 'spectrumVideo', name: 'Spectrum Video' },
-];
 </script>
 
 <style scoped>
-.tab-nav {
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 10px;
+.analysis-tabs {
+  width: 100%;
 }
-.tab-nav button {
-  padding: 10px 15px;
-  border: none;
-  background-color: transparent;
+.tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border-color);
+}
+.tabs button {
+  padding: 10px 20px;
   cursor: pointer;
-  font-size: 16px;
+  background-color: transparent;
+  border: none;
   color: var(--text-dark);
-  border-bottom: 3px solid transparent;
+  font-size: 16px;
   transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
 }
-.tab-nav button:hover {
+.tabs button.active {
   color: var(--accent-cyan);
+  border-bottom: 3px solid var(--accent-cyan);
 }
-.tab-nav button.active {
-  border-bottom-color: var(--accent-cyan);
+.tabs button:hover {
+  background-color: var(--light-blue-panel);
   color: var(--accent-cyan);
 }
 .tab-content {
-  padding: 10px;
+  padding-top: 20px;
 }
 </style>

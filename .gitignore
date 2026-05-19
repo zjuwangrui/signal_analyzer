@@ -1,6 +1,8 @@
 frontend\node_modules
 
 prompts\
-backend\app\api\__pycache__
-backend\app\services\__pycache__
+backend\app\api\__pycache__\
+backend\app\services\__pycache__\
+backend\app\utils\__pycache__\
 backend\logs\
+backend\__pycache__\

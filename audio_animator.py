@@ -33,7 +33,7 @@ def update_json(date:str) ->None:
         "cmap": Config.cmap,
         "audio_bitrate": Config.audio_bitrate,
         "frame_nums": Config.frame_nums,
-        "description":"use my own songbie.mp3"
+        "description":"add text overlay showing current time and frame range",
     }
     with open(CONFIG_JSON_PATH, "r") as f:
         params_list = json.load(f)
@@ -71,7 +71,9 @@ def create_spectrogram_animation(
     log(f"Computed STFT with n_fft={n_fft} and hop_length={hop_length}. Result shape: {stft_result.shape}")
     log(f"Max frequency: {max_frequency}")
     fig, ax = plt.subplots(figsize=Config.fig_size)
-    
+    fig.patch.set_facecolor("black")
+    ax.set_facecolor("black")
+
     img = ax.imshow(
         D[:, :1],
         aspect="auto",
@@ -79,12 +81,23 @@ def create_spectrogram_animation(
         cmap=Config.cmap,
         extent=[0, hop_length / sr, 0, max_frequency],
     )
+    time_text = ax.text(
+        0.98,
+        0.95,
+        "0.00 s",
+        color="white",
+        fontsize=12,
+        ha="right",
+        va="top",
+        transform=ax.transAxes,
+    )
     ax.set_ylim(1, max_frequency)
     ax.set_yscale("log")
     fig.subplots_adjust(left=0, right=1, bottom=0, top=1)
     ax.set_axis_off()
 
     def update(frame: int) -> Tuple[plt.Artist, ...]:
+        current_time = frame * hop_length / sr
         frame_nums = Config.frame_nums
         start_frame = max(0, frame - frame_nums // 2)
         end_frame = start_frame + frame_nums
@@ -98,7 +111,8 @@ def create_spectrogram_animation(
         img.set_data(D[:, start_frame:end_frame])
         img.set_extent([start_time, end_time, 0, max_frequency])
         ax.set_xlim(start_time, end_time)
-        return (img,)
+        time_text.set_text(f"{current_time:.2f} s")
+        return (img, time_text)
 
     num_frames = D.shape[1]
     fps = sr / hop_length

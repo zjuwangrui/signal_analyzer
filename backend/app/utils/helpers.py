@@ -1,5 +1,8 @@
 import io
 import base64
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 def fig_to_base64(fig):

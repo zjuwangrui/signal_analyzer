@@ -4,6 +4,8 @@ from config import Config
 from .utils.logging_config import setup_logging
 import os
 
+os.environ.setdefault("MPLBACKEND", "Agg")
+
 def create_app():
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__)

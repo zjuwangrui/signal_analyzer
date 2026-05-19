@@ -46,11 +46,20 @@ def task_status_route(task_id):
     if task is None:
         return jsonify({"error": "Task not found"}), 404
     
-    response = {"status": task['status']}
+    response = {
+        "status": task['status'],
+        "progress": task.get('progress', 0.0),
+        "message": task.get('message', ''),
+    }
     if task['status'] == 'success':
         # Result is the full path, we want a URL
-        video_filename = os.path.basename(task['result'])
-        response['video_url'] = f'/videos/{video_filename}'
+        result_path = task['result']
+        video_filename = os.path.basename(result_path)
+        result_folder = os.path.basename(os.path.dirname(result_path))
+        if result_folder == current_app.config.get('ANIMATION_FOLDER'):
+            response['video_url'] = f'/animations/{video_filename}'
+        else:
+            response['video_url'] = f'/videos/{video_filename}'
     elif task['status'] == 'failed':
         response['error'] = task['error']
         

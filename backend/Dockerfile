@@ -6,9 +6,11 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
+# 通过 pip 安装 uv
+RUN pip install uv
+
 COPY requirements.txt .
-RUN apt-get update && apt-get install -y ffmpeg
-RUN pip install --no-cache-dir -r requirements.txt
+RUN uv pip install --system -r requirements.txt
 
 COPY . .
 

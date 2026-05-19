@@ -8,19 +8,19 @@ export interface AnimationParams {
   hop_length?: number;
   cmap?: string;
   frame_nums?: number;
+  render_fps?: number;
+  max_video_frames?: number;
 }
 
-export interface AnimationResponse {
-  filename: string;
-  url: string;
-  download_url: string;
+export interface StftAnimationResponse {
+  task_id: string;
 }
 
 export const createStftAnimation = async (
   filename: string,
   params: AnimationParams = {},
-): Promise<AnimationResponse> => {
-  const response = await axios.post<AnimationResponse>(
+): Promise<StftAnimationResponse> => {
+  const response = await axios.post<StftAnimationResponse>(
     `${API_BASE_URL}/animate/${filename}`,
     null,
     { params },

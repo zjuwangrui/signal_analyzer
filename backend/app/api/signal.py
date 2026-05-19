@@ -8,7 +8,11 @@ from uuid import uuid4
 from flask import Blueprint, current_app, jsonify, request, send_from_directory
 
 from app.services.signal_processing import AnalysisParams, analyze_signal_data
-from app.services.stft_animation import AnimationParams, create_spectrogram_animation
+from app.services.stft_animation import (
+    AnimationParams,
+    create_spectrogram_animation,
+)
+from app.tasks import run_task_async
 
 signal_bp = Blueprint("signal", __name__)
 
@@ -29,14 +33,24 @@ def get_str_query_param(name: str, default: str) -> str:
     return value
 
 
+def get_float_query_param(name: str, default: float) -> float:
+    """Read a float query parameter with a concrete typed fallback."""
+    value = request.args.get(name, default=default, type=float)
+    if value is None:
+        return default
+    return value
+
+
 def build_animation_params() -> AnimationParams:
     """Read animation parameters from the query string."""
     return {
-        "sr": get_int_query_param("sr", 44100),
+        "sr": get_int_query_param("sr", 22050),
         "n_fft": get_int_query_param("n_fft", 2048),
         "hop_length": get_int_query_param("hop_length", 512),
         "cmap": get_str_query_param("cmap", "magma"),
         "frame_nums": get_int_query_param("frame_nums", 10),
+        "render_fps": get_float_query_param("render_fps", 12.0),
+        "max_video_frames": get_int_query_param("max_video_frames", 900),
     }
 
 
@@ -107,11 +121,16 @@ def animate_signal_route(filename: str):
             return jsonify({"error": "hop_length must be positive"}), 400
         if params["frame_nums"] <= 0:
             return jsonify({"error": "frame_nums must be positive"}), 400
+        if params["render_fps"] <= 0:
+            return jsonify({"error": "render_fps must be positive"}), 400
+        if params["max_video_frames"] <= 0:
+            return jsonify({"error": "max_video_frames must be positive"}), 400
 
         animation_folder = str(current_app.config["ANIMATION_FOLDER"])
         source_stem = Path(filename).stem
         animation_filename = f"{source_stem}_{uuid4().hex}_stft.mp4"
-        create_spectrogram_animation(
+        task_id = run_task_async(
+            create_spectrogram_animation,
             input_path=filepath,
             output_dir=animation_folder,
             filename=animation_filename,
@@ -120,16 +139,16 @@ def animate_signal_route(filename: str):
             hop_length=params["hop_length"],
             cmap=params["cmap"],
             frame_nums=params["frame_nums"],
+            render_fps=params["render_fps"],
+            max_video_frames=params["max_video_frames"],
         )
 
-        video_url = f"/animations/{animation_filename}"
-        download_url = f"/animations/{animation_filename}/download"
-        logging.info("Successfully generated animation for '%s': %s", filename, animation_filename)
-        return jsonify({"filename": animation_filename, "url": video_url, "download_url": download_url})
+        logging.info("Successfully queued animation task for '%s': %s", filename, task_id)
+        return jsonify({"task_id": task_id}), 202
 
     except Exception as error:
-        logging.error("Error generating animation for '%s': %s", filename, error, exc_info=True)
-        return jsonify({"error": str(error)}), 500
+        logging.error("Error processing animation for %s: %s", filename, error, exc_info=True)
+        return jsonify({"error": "Failed to start animation task"}), 500
 
 
 @signal_bp.route("/animations/<filename>", methods=["GET"])
