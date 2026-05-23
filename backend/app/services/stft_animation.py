@@ -4,16 +4,15 @@ import os
 from collections.abc import Callable
 
 import librosa
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
 from typing import TypedDict
 
 import logging
-
-import matplotlib
-
-matplotlib.use("Agg")
 from .animation_rendering import build_frame_schedule
 from .stft_analyzer import stft as manual_stft
 
@@ -87,12 +86,17 @@ def create_spectrogram_animation(
     fig.patch.set_facecolor("black")
     ax.set_facecolor("black")
 
+    min_frequency = float(positive_frequencies[1]) if len(positive_frequencies) > 1 else 1.0
+    visible_D = D[1:, :] if D.shape[0] > 1 else D
+
     img = ax.imshow(
-        D[:, :1],
+        visible_D[:, :1],
         aspect="auto",
         origin="lower",
         cmap=cmap,
-        extent=[0, hop_length / sr, 0, max_frequency],
+        extent=[0, hop_length / sr, min_frequency, max_frequency],
+        vmin=float(np.min(D)),
+        vmax=0.0,
     )
     time_text = ax.text(
         0.98,
@@ -104,7 +108,7 @@ def create_spectrogram_animation(
         va="top",
         transform=ax.transAxes,
     )
-    ax.set_ylim(1, max_frequency)
+    ax.set_ylim(min_frequency, max_frequency)
     ax.set_yscale("log")
     fig.subplots_adjust(left=0, right=1, bottom=0, top=1)
     ax.set_axis_off()
@@ -120,8 +124,8 @@ def create_spectrogram_animation(
 
         start_time = start_frame * hop_length / sr
         end_time = end_frame * hop_length / sr
-        img.set_data(D[:, start_frame:end_frame])
-        img.set_extent([start_time, end_time, 0, max_frequency])
+        img.set_data(visible_D[:, start_frame:end_frame])
+        img.set_extent([start_time, end_time, min_frequency, max_frequency])
         ax.set_xlim(start_time, end_time)
         time_text.set_text(f"{current_time:.2f} s")
         return (img, time_text)

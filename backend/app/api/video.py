@@ -55,8 +55,9 @@ def task_status_route(task_id):
         # Result is the full path, we want a URL
         result_path = task['result']
         video_filename = os.path.basename(result_path)
-        result_folder = os.path.basename(os.path.dirname(result_path))
-        if result_folder == current_app.config.get('ANIMATION_FOLDER'):
+        result_folder = os.path.abspath(os.path.dirname(result_path))
+        animation_folder = os.path.abspath(current_app.config.get('ANIMATION_FOLDER'))
+        if result_folder == animation_folder:
             response['video_url'] = f'/animations/{video_filename}'
         else:
             response['video_url'] = f'/videos/{video_filename}'

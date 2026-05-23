@@ -17,6 +17,11 @@ from app.tasks import run_task_async
 signal_bp = Blueprint("signal", __name__)
 
 
+def get_animation_folder() -> str:
+    """Return the concrete folder used for generated STFT animations."""
+    return os.path.abspath(str(current_app.config["ANIMATION_FOLDER"]))
+
+
 def get_int_query_param(name: str, default: int) -> int:
     """Read an integer query parameter with a concrete typed fallback."""
     value = request.args.get(name, default=default, type=int)
@@ -126,7 +131,7 @@ def animate_signal_route(filename: str):
         if params["max_video_frames"] <= 0:
             return jsonify({"error": "max_video_frames must be positive"}), 400
 
-        animation_folder = str(current_app.config["ANIMATION_FOLDER"])
+        animation_folder = get_animation_folder()
         source_stem = Path(filename).stem
         animation_filename = f"{source_stem}_{uuid4().hex}_stft.mp4"
         task_id = run_task_async(
@@ -154,14 +159,14 @@ def animate_signal_route(filename: str):
 @signal_bp.route("/animations/<filename>", methods=["GET"])
 def get_animation_file(filename: str):
     """Serve generated STFT animation files."""
-    animation_folder = str(current_app.config["ANIMATION_FOLDER"])
+    animation_folder = get_animation_folder()
     return send_from_directory(animation_folder, filename, mimetype="video/mp4")
 
 
 @signal_bp.route("/animations/<filename>/download", methods=["GET"])
 def download_animation_file(filename: str):
     """Download a generated STFT animation file."""
-    animation_folder = str(current_app.config["ANIMATION_FOLDER"])
+    animation_folder = get_animation_folder()
     return send_from_directory(
         animation_folder,
         filename,

@@ -13,21 +13,24 @@
       </div>
       <div v-else>No video to display</div>
     </div>
-    <a v-if="videoUrl" :href="videoUrl" download="spectrogram_video.mp4">
+    <a v-if="videoUrl" :href="downloadUrl" download="spectrogram_video.mp4">
       <button>Download Video</button>
     </a>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   videoUrl: string;
   status: string;
   progress: number;
   message: string;
   error: string;
 }>();
+
+const downloadUrl = computed(() => `${props.videoUrl}/download`);
 </script>
 
 <style scoped>
