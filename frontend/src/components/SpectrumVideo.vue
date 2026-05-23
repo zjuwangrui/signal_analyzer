@@ -13,7 +13,13 @@
       </div>
       <div v-else>No video to display</div>
     </div>
-    <a v-if="videoUrl" :href="videoUrl" download="spectrum_video.mp4">
+    <a
+      v-if="videoUrl"
+      :href="videoUrl"
+      download="spectrum_video.mp4"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       <button>Download Video</button>
     </a>
   </div>

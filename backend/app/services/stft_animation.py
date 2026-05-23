@@ -13,6 +13,7 @@ import numpy as np
 from typing import TypedDict
 
 import logging
+from .audio_muxing import mux_audio_track
 from .animation_rendering import build_frame_schedule
 from .stft_analyzer import stft as manual_stft
 
@@ -42,7 +43,7 @@ def create_spectrogram_animation(
     max_video_frames: int = 900,
     progress_callback: Callable[[float, str], None] | None = None,
 ) -> str:
-    """Render a silent STFT animation."""
+    """Render an STFT animation with the source audio track."""
     os.makedirs(output_dir, exist_ok=True)
 
     if n_fft <= 0:
@@ -157,6 +158,7 @@ def create_spectrogram_animation(
     )
 
     output_path = os.path.join(output_dir, filename)
+    silent_output_path = os.path.join(output_dir, f".{os.path.splitext(filename)[0]}_silent.mp4")
     writer = animation.FFMpegWriter(
         fps=max(1, int(round(output_fps))),
         codec="h264",
@@ -166,14 +168,28 @@ def create_spectrogram_animation(
     def save_progress(frame_number: int, total_frames: int) -> None:
         if progress_callback and total_frames:
             progress_callback(
-                0.15 + 0.83 * ((frame_number + 1) / total_frames),
+                0.15 + 0.75 * ((frame_number + 1) / total_frames),
                 f"Rendering STFT video {frame_number + 1}/{total_frames}",
             )
 
     try:
-        ani.save(output_path, writer=writer, progress_callback=save_progress)
+        ani.save(silent_output_path, writer=writer, progress_callback=save_progress)
     finally:
         plt.close(fig)
 
-    logging.info("Silent STFT animation saved to: %s", output_path)
+    logging.info("Silent STFT animation saved to: %s", silent_output_path)
+    if progress_callback:
+        progress_callback(0.92, "Muxing source audio")
+
+    try:
+        mux_audio_track(silent_output_path, input_path, output_path)
+    finally:
+        try:
+            os.remove(silent_output_path)
+        except FileNotFoundError:
+            pass
+
+    if progress_callback:
+        progress_callback(0.98, "Finalizing STFT video")
+    logging.info("STFT animation with audio saved to: %s", output_path)
     return output_path
