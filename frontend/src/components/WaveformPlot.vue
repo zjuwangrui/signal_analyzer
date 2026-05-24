@@ -1,9 +1,10 @@
 <template>
   <div class="plot-container">
-    <h4>Time-Domain Waveform</h4>
     <img v-if="plotUrl" :src="plotUrl" alt="Waveform" />
     <div v-else class="placeholder">No data to display</div>
-    <button v-if="plotUrl" @click="saveImage">Save Image</button>
+    <div class="button-wrapper">
+      <button v-if="plotUrl" @click="saveImage">Save Image</button>
+    </div>
   </div>
 </template>
 
@@ -33,6 +34,8 @@ const saveImage = () => {
 }
 img {
   max-width: 100%;
+  display: block;
+  margin: 0 auto;
 }
 .placeholder {
   height: 200px;
@@ -41,5 +44,21 @@ img {
   justify-content: center;
   color: #888;
   border: 1px dashed #ccc;
+}
+.button-wrapper {
+  margin-top: 12px;      /* 图片和按钮之间的间距 */
+}
+
+button {
+  padding: 6px 12px;
+  background-color: #42b983;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #369f6e;
 }
 </style>

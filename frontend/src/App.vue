@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
 import axios from 'axios';
+import type { AxiosError } from 'axios';
 import FileUpload from './components/FileUpload.vue';
 import AnalysisTabs from './components/AnalysisTabs.vue';
 import SettingsIcon from './components/SettingsIcon.vue';
@@ -136,6 +137,17 @@ const onApplyParams = (params: any) => {
   }
 };
 
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (axios.isAxiosError(error)) {
+    const axiosError = error as AxiosError<{ error?: string }>;
+    return axiosError.response?.data?.error || axiosError.message || fallback;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return fallback;
+};
+
 onMounted(() => {
   // No need to do anything here anymore as sr is part of the main ref
 });
@@ -178,7 +190,7 @@ const analyzeSignal = async () => {
 
   } catch (error) {
     console.error('Error analyzing signal:', error);
-    alert('Error analyzing signal.');
+    alert(`Error analyzing signal: ${getErrorMessage(error, 'Unknown error')}`);
   } finally {
     isLoading.value = false;
   }
@@ -205,10 +217,11 @@ const triggerSpectrumVideoAnalysis = async (runId: number) => {
 
   } catch (error) {
     console.error('Error starting spectrum video analysis:', error);
+    const message = getErrorMessage(error, 'Failed to start spectrum video task.');
     setVideoTaskState('spectrum', {
       status: 'failed',
       message: 'Failed to start',
-      error: 'Failed to start spectrum video task.',
+      error: message,
     });
   }
 };
@@ -234,10 +247,11 @@ const triggerSpectrogramVideoAnalysis = async (runId: number) => {
     pollTaskStatus(task_id, 'spectrogram', runId);
   } catch (error) {
     console.error('Error starting spectrogram video analysis:', error);
+    const message = getErrorMessage(error, 'Failed to start spectrogram video task.');
     setVideoTaskState('spectrogram', {
       status: 'failed',
       message: 'Failed to start',
-      error: 'Failed to start spectrogram video task.',
+      error: message,
     });
   }
 };
@@ -281,10 +295,11 @@ const pollTaskStatus = (taskId: string, videoType: VideoType, runId: number) => 
     } catch (err) {
       clearInterval(interval);
       console.error('Error polling task status:', err);
+      const message = getErrorMessage(err, 'Could not check video task status.');
       setVideoTaskState(videoType, {
         status: 'failed',
         message: 'Status check failed',
-        error: 'Could not check video task status.',
+        error: message,
       });
     }
   }, 3000); // Poll every 3 seconds
@@ -371,4 +386,3 @@ h1 {
   margin-top: 50px;
 }
 </style>
-

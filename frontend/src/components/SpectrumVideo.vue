@@ -87,7 +87,7 @@ progress {
 button {
   margin-top: 10px;
   padding: 8px 15px;
-  background-color: var(--accent-blue);
+  background-color: #42b983;
   border: none;
   border-radius: 4px;
   color: #fff;
@@ -95,6 +95,6 @@ button {
   transition: background-color 0.3s ease;
 }
 button:hover {
-  background-color: #5cacee;
+  background-color: #369f6e;
 }
 </style>

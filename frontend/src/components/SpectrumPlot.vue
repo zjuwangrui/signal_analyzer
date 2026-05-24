@@ -1,14 +1,14 @@
 <template>
   <div class="plot-container">
-    <h4>Spectrum</h4>
     <img v-if="plotUrl" :src="plotUrl" alt="Spectrum" />
     <div v-else class="placeholder">No data to display</div>
-    <button v-if="plotUrl" @click="saveImage">Save Image</button>
+    <div class="button-wrapper">
+      <button v-if="plotUrl" @click="saveImage">Save Image</button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-
 const props = defineProps<{
   plotUrl: string;
 }>();
@@ -31,9 +31,13 @@ const saveImage = () => {
   margin-bottom: 10px;
   text-align: center;
 }
+
 img {
   max-width: 100%;
+  display: block;        /* 让图片独占一行 */
+  margin: 0 auto;        /* 居中（如果图片比容器小） */
 }
+
 .placeholder {
   height: 200px;
   display: flex;
@@ -41,5 +45,22 @@ img {
   justify-content: center;
   color: #888;
   border: 1px dashed #ccc;
+}
+
+.button-wrapper {
+  margin-top: 12px;      /* 图片和按钮之间的间距 */
+}
+
+button {
+  padding: 6px 12px;
+  background-color: #42b983;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #369f6e;
 }
 </style>

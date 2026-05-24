@@ -46,6 +46,12 @@ def analyze_signal_data(filepath: str, params: AnalysisParams) -> AnalysisPlots:
     spectrum_n_fft = params.get("spectrum_n_fft", params.get("n_fft", len(y)))
     stft_n_fft = params.get("stft_n_fft", params.get("n_fft", params["win_length"]))
     win_length = params.get("win_length", stft_n_fft)
+    if y.size == 0:
+        raise ValueError(f"No signal samples loaded from '{filepath}'.")
+    if not np.any(np.isfinite(y)):
+        raise ValueError(f"Signal loaded from '{filepath}' contains no finite samples.")
+    if not np.any(y):
+        raise ValueError(f"Signal loaded from '{filepath}' is all zeros.")
 
     # 1. Time-domain waveform
     fig_time, ax_time = plt.subplots(figsize=(10, 4))
@@ -84,10 +90,19 @@ def analyze_signal_data(filepath: str, params: AnalysisParams) -> AnalysisPlots:
     img_spectrogram = fig_to_base64(fig_spec)
 
     # 3. Spectrum Plot
+    if spectrum_n_fft < y.size:
+        spectrum_n_fft = y.size
     fft_vals = np.fft.rfft(y, n=spectrum_n_fft)
     fft_freq = np.fft.rfftfreq(spectrum_n_fft, d=1./sr_loaded)
+    magnitude = np.abs(fft_vals)
+    if not np.any(magnitude):
+        raise ValueError(
+            f"FFT magnitude is all zeros. samples={y.size}, sr={sr_loaded}, "
+            f"spectrum_n_fft={spectrum_n_fft}, signal_min={float(np.min(y))}, "
+            f"signal_max={float(np.max(y))}."
+        )
     fig_fft, ax_fft = plt.subplots(figsize=(10, 4))
-    ax_fft.plot(fft_freq, np.abs(fft_vals))
+    ax_fft.plot(fft_freq, magnitude)
     ax_fft.set_title('Spectrum')
     ax_fft.set_xlabel('Frequency (Hz)')
     ax_fft.set_ylabel('Magnitude')

@@ -5,6 +5,25 @@ from numpy.typing import ArrayLike, NDArray
 
 FloatArray = NDArray[np.float64]
 ComplexArray = NDArray[np.complex128]
+WINDOW_TYPES = ("hann", "hamming", "blackman", "bartlett", "kaiser")
+
+
+def get_window(window_type: str, window_size: int) -> FloatArray:
+    """Return a supported analysis window."""
+    if window_type == "hann":
+        return np.hanning(window_size)
+    if window_type == "hamming":
+        return np.hamming(window_size)
+    if window_type == "blackman":
+        return np.blackman(window_size)
+    if window_type == "bartlett":
+        return np.bartlett(window_size)
+    if window_type == "kaiser":
+        return np.kaiser(window_size, 14)
+    raise ValueError(
+        f"Unsupported window type '{window_type}'. "
+        f"Supported window types: {', '.join(WINDOW_TYPES)}."
+    )
 
 
 def stft(
@@ -47,12 +66,7 @@ def stft(
     nfft = n_fft
     num_frames = (samples.size - window_size) // frame_shift + 1
 
-    # Get the specified window function
-    try:
-        window = np.get_window(window_type, window_size)
-    except ValueError:
-        print(f"Warning: Unsupported window type '{window_type}'. Using rectangular window.")
-        window = np.ones(window_size, dtype=np.float64)
+    window = get_window(window_type, window_size)
 
     spectrum = np.zeros((nfft, num_frames), dtype=np.complex128)
     frequencies = np.arange(nfft, dtype=np.float64) * fs / nfft

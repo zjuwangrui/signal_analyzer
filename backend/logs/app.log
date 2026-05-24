@@ -441,3 +441,147 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.9/site-packages/numpy/__init__.py", line 320, in __getattr__
     raise AttributeError("module {!r} has no attribute "
 AttributeError: module 'numpy' has no attribute 'get_window'
+2026-05-24 03:06:02,530 - INFO - generated new fontManager
+2026-05-24 03:06:07,510 - INFO - File 'self_songbie.mp3' uploaded successfully.
+2026-05-24 03:06:08,457 - INFO - Analyzing 'self_songbie.mp3' with params: {'sr': 22050, 'spectrum_n_fft': 2048, 'stft_n_fft': 2048, 'hop_length': 512, 'win_length': 2048, 'window': 'hann', 'cmap': 'viridis'}
+2026-05-24 03:06:12,967 - INFO - Successfully generated plots for 'self_songbie.mp3'.
+2026-05-24 03:06:12,991 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 2%: Loading audio
+2026-05-24 03:06:12,991 - INFO - Queued task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 for function create_spectrum_animation
+2026-05-24 03:06:12,995 - INFO - Queued task f3aec561-d2e2-4193-b1a4-25d793800dd5 for function create_spectrogram_animation
+2026-05-24 03:06:12,995 - INFO - Successfully queued animation task for 'self_songbie.mp3': f3aec561-d2e2-4193-b1a4-25d793800dd5
+2026-05-24 03:06:14,777 - INFO - Loaded audio file 'uploads/self_songbie.mp3' with sample rate 22050 and 1280429 samples.
+2026-05-24 03:06:14,858 - INFO - Computed frame-wise FFT with n_fft=2048, hop_length=512. Result shape: (1025, 2497)
+2026-05-24 03:06:14,858 - INFO - Frequency range: 10.7666015625 Hz to 11025.0 Hz
+2026-05-24 03:06:14,869 - INFO - Rendering FFT spectrum animation with 696/2497 frames at 12.00 fps (duration 57.98s).
+2026-05-24 03:06:14,869 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 15%: Rendering FFT video
+2026-05-24 03:06:14,876 - INFO - Animation.save using <class 'matplotlib.animation.FFMpegWriter'>
+2026-05-24 03:06:14,877 - INFO - MovieWriter._run: running command: ffmpeg -f rawvideo -vcodec rawvideo -s 1200x700 -pix_fmt rgba -r 12 -loglevel error -i pipe: -vcodec h264 -pix_fmt yuv420p -preset veryfast -crf 23 -y videos/.spectrum_self_songbie_silent.mp4
+2026-05-24 03:06:15,787 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 20%: Rendering FFT video 47/696
+2026-05-24 03:06:17,272 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 30%: Rendering FFT video 140/696
+2026-05-24 03:06:18,768 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 40%: Rendering FFT video 232/696
+2026-05-24 03:06:20,347 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 50%: Rendering FFT video 325/696
+2026-05-24 03:06:21,908 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 60%: Rendering FFT video 418/696
+2026-05-24 03:06:23,432 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 70%: Rendering FFT video 511/696
+2026-05-24 03:06:25,030 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 80%: Rendering FFT video 604/696
+2026-05-24 03:06:26,616 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 (create_spectrum_animation) progress 90%: Rendering FFT video 696/696
+2026-05-24 03:06:26,677 - INFO - Silent FFT spectrum animation saved to: videos/.spectrum_self_songbie_silent.mp4
+2026-05-24 03:06:26,678 - INFO - Muxing audio track into video: video=videos/.spectrum_self_songbie_silent.mp4 audio=uploads/self_songbie.mp3 output=videos/spectrum_self_songbie.mp4
+2026-05-24 03:06:27,571 - INFO - Muxed animation video saved to: videos/spectrum_self_songbie.mp4
+2026-05-24 03:06:27,575 - INFO - FFT spectrum animation with audio saved to: videos/spectrum_self_songbie.mp4
+2026-05-24 03:06:27,576 - INFO - Task 6ef4748a-2936-4e6e-a95c-e22d42fa5003 for function create_spectrum_animation completed.
+2026-05-24 03:06:27,577 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 2%: Loading audio
+2026-05-24 03:06:28,365 - INFO - Loaded audio file 'uploads/self_songbie.mp3' for STFT animation with sample rate 22050 and 1280429 samples.
+2026-05-24 03:06:28,566 - INFO - Computed STFT animation data with n_fft=2048, hop_length=512. Result shape: (1025, 2497)
+2026-05-24 03:06:28,579 - INFO - Rendering STFT animation with 696/2497 frames at 12.00 fps (duration 57.98s).
+2026-05-24 03:06:28,580 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 15%: Rendering STFT video
+2026-05-24 03:06:28,677 - INFO - Animation.save using <class 'matplotlib.animation.FFMpegWriter'>
+2026-05-24 03:06:28,678 - INFO - MovieWriter._run: running command: ffmpeg -f rawvideo -vcodec rawvideo -s 1200x700 -pix_fmt rgba -r 12 -loglevel error -i pipe: -vcodec h264 -pix_fmt yuv420p -preset veryfast -crf 23 -y /app/animations/.self_songbie_d158e85b77a14369a69c56124530a32e_stft_silent.mp4
+2026-05-24 03:06:35,329 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 20%: Rendering STFT video 47/696
+2026-05-24 03:06:48,642 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 30%: Rendering STFT video 140/696
+2026-05-24 03:07:00,785 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 40%: Rendering STFT video 232/696
+2026-05-24 03:07:14,127 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 50%: Rendering STFT video 325/696
+2026-05-24 03:07:26,407 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 60%: Rendering STFT video 418/696
+2026-05-24 03:07:39,632 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 70%: Rendering STFT video 511/696
+2026-05-24 03:07:53,101 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 80%: Rendering STFT video 604/696
+2026-05-24 03:08:05,262 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 (create_spectrogram_animation) progress 90%: Rendering STFT video 696/696
+2026-05-24 03:08:05,372 - INFO - Silent STFT animation saved to: /app/animations/.self_songbie_d158e85b77a14369a69c56124530a32e_stft_silent.mp4
+2026-05-24 03:08:05,372 - INFO - Muxing audio track into video: video=/app/animations/.self_songbie_d158e85b77a14369a69c56124530a32e_stft_silent.mp4 audio=uploads/self_songbie.mp3 output=/app/animations/self_songbie_d158e85b77a14369a69c56124530a32e_stft.mp4
+2026-05-24 03:08:06,286 - INFO - Muxed animation video saved to: /app/animations/self_songbie_d158e85b77a14369a69c56124530a32e_stft.mp4
+2026-05-24 03:08:06,288 - INFO - STFT animation with audio saved to: /app/animations/self_songbie_d158e85b77a14369a69c56124530a32e_stft.mp4
+2026-05-24 03:08:06,299 - INFO - Task f3aec561-d2e2-4193-b1a4-25d793800dd5 for function create_spectrogram_animation completed.
+2026-05-24 03:16:16,451 - INFO - generated new fontManager
+2026-05-24 03:16:26,262 - INFO - File 'self_songbie.mp3' uploaded successfully.
+2026-05-24 03:16:27,446 - INFO - Analyzing 'self_songbie.mp3' with params: {'sr': 22050, 'spectrum_n_fft': 2048, 'stft_n_fft': 2048, 'hop_length': 512, 'win_length': 2048, 'window': 'hann', 'cmap': 'viridis'}
+2026-05-24 03:16:32,181 - INFO - Successfully generated plots for 'self_songbie.mp3'.
+2026-05-24 03:16:32,202 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 2%: Loading audio
+2026-05-24 03:16:32,202 - INFO - Queued task 94dd72dc-9b81-429d-b925-27c18c888551 for function create_spectrum_animation
+2026-05-24 03:16:32,207 - INFO - Queued task 013122be-089c-4271-b6c1-889e709f2d39 for function create_spectrogram_animation
+2026-05-24 03:16:32,207 - INFO - Successfully queued animation task for 'self_songbie.mp3': 013122be-089c-4271-b6c1-889e709f2d39
+2026-05-24 03:16:34,085 - INFO - Loaded audio file 'uploads/self_songbie.mp3' with sample rate 22050 and 1280429 samples.
+2026-05-24 03:16:34,177 - INFO - Computed frame-wise FFT with n_fft=2048, hop_length=512. Result shape: (1025, 2497)
+2026-05-24 03:16:34,178 - INFO - Frequency range: 10.7666015625 Hz to 11025.0 Hz
+2026-05-24 03:16:34,192 - INFO - Rendering FFT spectrum animation with 696/2497 frames at 12.00 fps (duration 57.98s).
+2026-05-24 03:16:34,193 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 15%: Rendering FFT video
+2026-05-24 03:16:34,199 - INFO - Animation.save using <class 'matplotlib.animation.FFMpegWriter'>
+2026-05-24 03:16:34,201 - INFO - MovieWriter._run: running command: ffmpeg -f rawvideo -vcodec rawvideo -s 1200x700 -pix_fmt rgba -r 12 -loglevel error -i pipe: -vcodec h264 -pix_fmt yuv420p -preset veryfast -crf 23 -y videos/.spectrum_self_songbie_silent.mp4
+2026-05-24 03:16:35,053 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 20%: Rendering FFT video 47/696
+2026-05-24 03:16:36,004 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 30%: Rendering FFT video 140/696
+2026-05-24 03:16:37,441 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 40%: Rendering FFT video 232/696
+2026-05-24 03:16:38,914 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 50%: Rendering FFT video 325/696
+2026-05-24 03:16:40,493 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 60%: Rendering FFT video 418/696
+2026-05-24 03:16:42,075 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 70%: Rendering FFT video 511/696
+2026-05-24 03:16:43,603 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 80%: Rendering FFT video 604/696
+2026-05-24 03:16:45,185 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 (create_spectrum_animation) progress 90%: Rendering FFT video 696/696
+2026-05-24 03:16:45,244 - INFO - Silent FFT spectrum animation saved to: videos/.spectrum_self_songbie_silent.mp4
+2026-05-24 03:16:45,244 - INFO - Muxing audio track into video: video=videos/.spectrum_self_songbie_silent.mp4 audio=uploads/self_songbie.mp3 output=videos/spectrum_self_songbie.mp4
+2026-05-24 03:16:46,154 - INFO - Muxed animation video saved to: videos/spectrum_self_songbie.mp4
+2026-05-24 03:16:46,158 - INFO - FFT spectrum animation with audio saved to: videos/spectrum_self_songbie.mp4
+2026-05-24 03:16:46,159 - INFO - Task 94dd72dc-9b81-429d-b925-27c18c888551 for function create_spectrum_animation completed.
+2026-05-24 03:16:46,160 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 2%: Loading audio
+2026-05-24 03:16:48,090 - INFO - Loaded audio file 'uploads/self_songbie.mp3' for STFT animation with sample rate 22050 and 1280429 samples.
+2026-05-24 03:16:48,283 - INFO - Computed STFT animation data with n_fft=2048, hop_length=512. Result shape: (1025, 2497)
+2026-05-24 03:16:48,297 - INFO - Rendering STFT animation with 696/2497 frames at 12.00 fps (duration 57.98s).
+2026-05-24 03:16:48,297 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 15%: Rendering STFT video
+2026-05-24 03:16:48,406 - INFO - Animation.save using <class 'matplotlib.animation.FFMpegWriter'>
+2026-05-24 03:16:48,408 - INFO - MovieWriter._run: running command: ffmpeg -f rawvideo -vcodec rawvideo -s 1200x700 -pix_fmt rgba -r 12 -loglevel error -i pipe: -vcodec h264 -pix_fmt yuv420p -preset veryfast -crf 23 -y /app/animations/.self_songbie_c3e2a8c4b38b47258d7d52dd3d2673cd_stft_silent.mp4
+2026-05-24 03:16:55,202 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 20%: Rendering STFT video 47/696
+2026-05-24 03:17:07,253 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 30%: Rendering STFT video 140/696
+2026-05-24 03:17:20,271 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 40%: Rendering STFT video 232/696
+2026-05-24 03:17:33,041 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 50%: Rendering STFT video 325/696
+2026-05-24 03:17:45,404 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 60%: Rendering STFT video 418/696
+2026-05-24 03:17:56,959 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 70%: Rendering STFT video 511/696
+2026-05-24 03:18:09,105 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 80%: Rendering STFT video 604/696
+2026-05-24 03:18:22,124 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 (create_spectrogram_animation) progress 90%: Rendering STFT video 696/696
+2026-05-24 03:18:22,244 - INFO - Silent STFT animation saved to: /app/animations/.self_songbie_c3e2a8c4b38b47258d7d52dd3d2673cd_stft_silent.mp4
+2026-05-24 03:18:22,244 - INFO - Muxing audio track into video: video=/app/animations/.self_songbie_c3e2a8c4b38b47258d7d52dd3d2673cd_stft_silent.mp4 audio=uploads/self_songbie.mp3 output=/app/animations/self_songbie_c3e2a8c4b38b47258d7d52dd3d2673cd_stft.mp4
+2026-05-24 03:18:23,143 - INFO - Muxed animation video saved to: /app/animations/self_songbie_c3e2a8c4b38b47258d7d52dd3d2673cd_stft.mp4
+2026-05-24 03:18:23,144 - INFO - STFT animation with audio saved to: /app/animations/self_songbie_c3e2a8c4b38b47258d7d52dd3d2673cd_stft.mp4
+2026-05-24 03:18:23,154 - INFO - Task 013122be-089c-4271-b6c1-889e709f2d39 for function create_spectrogram_animation completed.
+2026-05-24 03:24:15,043 - INFO - generated new fontManager
+2026-05-24 03:24:20,810 - INFO - File 'self_songbie.mp3' uploaded successfully.
+2026-05-24 03:24:22,266 - INFO - Analyzing 'self_songbie.mp3' with params: {'sr': 22050, 'spectrum_n_fft': 2048, 'stft_n_fft': 2048, 'hop_length': 512, 'win_length': 2048, 'window': 'hann', 'cmap': 'viridis'}
+2026-05-24 03:24:26,858 - INFO - Successfully generated plots for 'self_songbie.mp3'.
+2026-05-24 03:24:26,878 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 2%: Loading audio
+2026-05-24 03:24:26,878 - INFO - Queued task c53a4ed0-021e-443f-a300-446336a76c11 for function create_spectrum_animation
+2026-05-24 03:24:26,883 - INFO - Queued task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 for function create_spectrogram_animation
+2026-05-24 03:24:26,884 - INFO - Successfully queued animation task for 'self_songbie.mp3': ddbb8b2c-e745-4465-afa5-c71fe9ce5930
+2026-05-24 03:24:28,987 - INFO - Loaded audio file 'uploads/self_songbie.mp3' with sample rate 22050 and 1280429 samples.
+2026-05-24 03:24:29,117 - INFO - Computed frame-wise FFT with n_fft=2048, hop_length=512. Result shape: (1025, 2497)
+2026-05-24 03:24:29,118 - INFO - Frequency range: 10.7666015625 Hz to 11025.0 Hz
+2026-05-24 03:24:29,140 - INFO - Rendering FFT spectrum animation with 696/2497 frames at 12.00 fps (duration 57.98s).
+2026-05-24 03:24:29,140 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 15%: Rendering FFT video
+2026-05-24 03:24:29,148 - INFO - Animation.save using <class 'matplotlib.animation.FFMpegWriter'>
+2026-05-24 03:24:29,149 - INFO - MovieWriter._run: running command: ffmpeg -f rawvideo -vcodec rawvideo -s 1200x700 -pix_fmt rgba -r 12 -loglevel error -i pipe: -vcodec h264 -pix_fmt yuv420p -preset veryfast -crf 23 -y videos/.spectrum_self_songbie_silent.mp4
+2026-05-24 03:24:30,005 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 20%: Rendering FFT video 47/696
+2026-05-24 03:24:31,406 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 30%: Rendering FFT video 140/696
+2026-05-24 03:24:32,816 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 40%: Rendering FFT video 232/696
+2026-05-24 03:24:34,248 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 50%: Rendering FFT video 325/696
+2026-05-24 03:24:35,776 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 60%: Rendering FFT video 418/696
+2026-05-24 03:24:37,398 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 70%: Rendering FFT video 511/696
+2026-05-24 03:24:38,929 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 80%: Rendering FFT video 604/696
+2026-05-24 03:24:40,390 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 (create_spectrum_animation) progress 90%: Rendering FFT video 696/696
+2026-05-24 03:24:40,446 - INFO - Silent FFT spectrum animation saved to: videos/.spectrum_self_songbie_silent.mp4
+2026-05-24 03:24:40,446 - INFO - Muxing audio track into video: video=videos/.spectrum_self_songbie_silent.mp4 audio=uploads/self_songbie.mp3 output=videos/spectrum_self_songbie.mp4
+2026-05-24 03:24:41,329 - INFO - Muxed animation video saved to: videos/spectrum_self_songbie.mp4
+2026-05-24 03:24:41,333 - INFO - FFT spectrum animation with audio saved to: videos/spectrum_self_songbie.mp4
+2026-05-24 03:24:41,333 - INFO - Task c53a4ed0-021e-443f-a300-446336a76c11 for function create_spectrum_animation completed.
+2026-05-24 03:24:41,334 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 2%: Loading audio
+2026-05-24 03:24:43,157 - INFO - Loaded audio file 'uploads/self_songbie.mp3' for STFT animation with sample rate 22050 and 1280429 samples.
+2026-05-24 03:24:43,353 - INFO - Computed STFT animation data with n_fft=2048, hop_length=512. Result shape: (1025, 2497)
+2026-05-24 03:24:43,367 - INFO - Rendering STFT animation with 696/2497 frames at 12.00 fps (duration 57.98s).
+2026-05-24 03:24:43,368 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 15%: Rendering STFT video
+2026-05-24 03:24:43,463 - INFO - Animation.save using <class 'matplotlib.animation.FFMpegWriter'>
+2026-05-24 03:24:43,464 - INFO - MovieWriter._run: running command: ffmpeg -f rawvideo -vcodec rawvideo -s 1200x700 -pix_fmt rgba -r 12 -loglevel error -i pipe: -vcodec h264 -pix_fmt yuv420p -preset veryfast -crf 23 -y /app/animations/.self_songbie_f7de300536654882b10aa9061412074c_stft_silent.mp4
+2026-05-24 03:24:49,631 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 20%: Rendering STFT video 47/696
+2026-05-24 03:25:01,061 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 30%: Rendering STFT video 140/696
+2026-05-24 03:25:13,738 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 40%: Rendering STFT video 232/696
+2026-05-24 03:25:25,747 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 50%: Rendering STFT video 325/696
+2026-05-24 03:25:38,274 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 60%: Rendering STFT video 418/696
+2026-05-24 03:25:49,392 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 70%: Rendering STFT video 511/696
+2026-05-24 03:26:01,710 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 80%: Rendering STFT video 604/696
+2026-05-24 03:26:12,687 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 (create_spectrogram_animation) progress 90%: Rendering STFT video 696/696
+2026-05-24 03:26:12,802 - INFO - Silent STFT animation saved to: /app/animations/.self_songbie_f7de300536654882b10aa9061412074c_stft_silent.mp4
+2026-05-24 03:26:12,803 - INFO - Muxing audio track into video: video=/app/animations/.self_songbie_f7de300536654882b10aa9061412074c_stft_silent.mp4 audio=uploads/self_songbie.mp3 output=/app/animations/self_songbie_f7de300536654882b10aa9061412074c_stft.mp4
+2026-05-24 03:26:13,682 - INFO - Muxed animation video saved to: /app/animations/self_songbie_f7de300536654882b10aa9061412074c_stft.mp4
+2026-05-24 03:26:13,683 - INFO - STFT animation with audio saved to: /app/animations/self_songbie_f7de300536654882b10aa9061412074c_stft.mp4
+2026-05-24 03:26:13,693 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 for function create_spectrogram_animation completed.
