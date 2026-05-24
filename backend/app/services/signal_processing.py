@@ -19,8 +19,11 @@ FloatArray = NDArray[np.float64]
 
 class AnalysisParams(TypedDict):
     sr: int
-    n_fft: int
+    spectrum_n_fft: int
+    stft_n_fft: int
     hop_length: int
+    win_length: int
+    window: str
     cmap: str
 
 
@@ -40,6 +43,9 @@ def analyze_signal_data(filepath: str, params: AnalysisParams) -> AnalysisPlots:
     """
     y_raw, sr_loaded = librosa.load(filepath, sr=params["sr"])
     y: FloatArray = np.asarray(y_raw, dtype=np.float64)
+    spectrum_n_fft = params.get("spectrum_n_fft", params.get("n_fft", len(y)))
+    stft_n_fft = params.get("stft_n_fft", params.get("n_fft", params["win_length"]))
+    win_length = params.get("win_length", stft_n_fft)
 
     # 1. Time-domain waveform
     fig_time, ax_time = plt.subplots(figsize=(10, 4))
@@ -53,10 +59,12 @@ def analyze_signal_data(filepath: str, params: AnalysisParams) -> AnalysisPlots:
     frequencies, times, spectrum = stft(
         y,
         fs=float(sr_loaded),
-        window_size=params["n_fft"],
+        window_size=win_length,
         frame_shift=params["hop_length"],
+        window_type=params.get("window", "hann"),
+        n_fft=stft_n_fft,
     )
-    positive_bin_count = params["n_fft"] // 2 + 1
+    positive_bin_count = stft_n_fft // 2 + 1
     positive_frequencies = frequencies[:positive_bin_count]
     magnitude = np.abs(spectrum[:positive_bin_count, :])
     S_db = librosa.amplitude_to_db(magnitude, ref=np.max)
@@ -76,8 +84,8 @@ def analyze_signal_data(filepath: str, params: AnalysisParams) -> AnalysisPlots:
     img_spectrogram = fig_to_base64(fig_spec)
 
     # 3. Spectrum Plot
-    fft_vals = np.fft.rfft(y)
-    fft_freq = np.fft.rfftfreq(len(y), d=1./sr_loaded)
+    fft_vals = np.fft.rfft(y, n=spectrum_n_fft)
+    fft_freq = np.fft.rfftfreq(spectrum_n_fft, d=1./sr_loaded)
     fig_fft, ax_fft = plt.subplots(figsize=(10, 4))
     ax_fft.plot(fft_freq, np.abs(fft_vals))
     ax_fft.set_title('Spectrum')

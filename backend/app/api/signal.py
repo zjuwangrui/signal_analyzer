@@ -17,6 +17,16 @@ from app.tasks import run_task_async
 signal_bp = Blueprint("signal", __name__)
 
 
+def get_request_param(name: str):
+    """Read a parameter from query string first, then JSON body."""
+    if name in request.args:
+        return request.args.get(name)
+    if request.is_json:
+        data = request.get_json(silent=True) or {}
+        return data.get(name)
+    return None
+
+
 def get_animation_folder() -> str:
     """Return the concrete folder used for generated STFT animations."""
     return os.path.abspath(str(current_app.config["ANIMATION_FOLDER"]))
@@ -24,26 +34,26 @@ def get_animation_folder() -> str:
 
 def get_int_query_param(name: str, default: int) -> int:
     """Read an integer query parameter with a concrete typed fallback."""
-    value = request.args.get(name, default=default, type=int)
-    if value is None:
+    value = get_request_param(name)
+    if value in (None, ""):
         return default
-    return value
+    return int(value)
 
 
 def get_str_query_param(name: str, default: str) -> str:
     """Read a string query parameter with a concrete typed fallback."""
-    value = request.args.get(name, default=default, type=str)
-    if value is None:
+    value = get_request_param(name)
+    if value in (None, ""):
         return default
-    return value
+    return str(value)
 
 
 def get_float_query_param(name: str, default: float) -> float:
     """Read a float query parameter with a concrete typed fallback."""
-    value = request.args.get(name, default=default, type=float)
-    if value is None:
+    value = get_request_param(name)
+    if value in (None, ""):
         return default
-    return value
+    return float(value)
 
 
 def build_animation_params() -> AnimationParams:
@@ -90,12 +100,26 @@ def analyze_signal_route(filename: str):
 
     try:
         # Get parameters from request or use defaults
+        stft_n_fft = get_int_query_param("stft_n_fft", get_int_query_param("n_fft", 2048))
         params: AnalysisParams = {
             "sr": get_int_query_param("sr", 22050),
-            "n_fft": get_int_query_param("n_fft", 2048),
+            "spectrum_n_fft": get_int_query_param("spectrum_n_fft", get_int_query_param("n_fft", 2048)),
+            "stft_n_fft": stft_n_fft,
             "hop_length": get_int_query_param("hop_length", 512),
+            "win_length": get_int_query_param("win_length", stft_n_fft),
+            "window": get_str_query_param("window", "hann"),
             "cmap": get_str_query_param("cmap", "viridis"),
         }
+        if params["sr"] <= 0:
+            return jsonify({"error": "sr must be positive"}), 400
+        if params["spectrum_n_fft"] <= 0:
+            return jsonify({"error": "spectrum_n_fft must be positive"}), 400
+        if params["stft_n_fft"] <= 0:
+            return jsonify({"error": "stft_n_fft must be positive"}), 400
+        if params["hop_length"] <= 0:
+            return jsonify({"error": "hop_length must be positive"}), 400
+        if params["win_length"] <= 0:
+            return jsonify({"error": "win_length must be positive"}), 400
 
         logging.info("Analyzing '%s' with params: %s", filename, params)
 
@@ -110,6 +134,7 @@ def analyze_signal_route(filename: str):
 
 
 @signal_bp.route("/animate/<filename>", methods=["POST"])
+@signal_bp.route("/analyze/spectrogram_video/<filename>", methods=["POST"])
 def animate_signal_route(filename: str):
     """Generate an STFT animation for an uploaded audio file."""
     upload_folder = str(current_app.config["UPLOAD_FOLDER"])

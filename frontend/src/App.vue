@@ -1,10 +1,14 @@
 <template>
   <div id="app">
-    <h1>Signal Analyzer</h1>
+    <header class="app-header">
+      <h1>Signal Analyzer</h1>
+      <SettingsIcon @click="isSettingsOpen = true" />
+    </header>
+    <SettingsDialog :is-open="isSettingsOpen" :params="analysisParams" @close="isSettingsOpen = false"
+      @update:params="onApplyParams" />
     <div class="main-layout">
       <div class="controls-panel">
         <FileUpload @upload-success="onUploadSuccess" />
-        <Controls @apply-params="onApplyParams" />
       </div>
       <div class="plots-panel">
         <div v-if="isLoading" class="loading-overlay">
@@ -20,17 +24,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import axios from 'axios';
 import FileUpload from './components/FileUpload.vue';
-import Controls from './components/Controls.vue';
 import AnalysisTabs from './components/AnalysisTabs.vue';
+import SettingsIcon from './components/SettingsIcon.vue';
+import SettingsDialog from './components/SettingsDialog.vue';
 
 type VideoType = 'spectrum' | 'spectrogram';
 type VideoStatus = 'idle' | 'queued' | 'running' | 'success' | 'failed';
 
+const isSettingsOpen = ref(false);
+
 const uploadedFilename = ref<string | null>(null);
-const analysisParams = ref({});
+const analysisParams = ref({
+  sr: 22050,
+  waveform: {},
+  spectrum: {
+    n_fft: 2048,
+  },
+  stft: {
+    n_fft: 2048,
+    hop_length: 512,
+    win_length: 2048,
+    window: 'hann',
+    cmap: 'viridis'
+  },
+  fft_animation: {
+    n_fft: 2048,
+  },
+  stft_animation: {
+    n_fft: 2048,
+    hop_length: 512,
+  }
+});
 const analysisResults = reactive({
   waveform: '',
   spectrogram: '',
@@ -99,17 +126,19 @@ const onUploadSuccess = (filename: string) => {
     spectrum: '',
   });
   resetVideoState();
-  analyzeSignal();
+  analyzeSignal(); // Trigger analysis on new upload
 };
 
 const onApplyParams = (params: any) => {
-  analysisParams.value = params;
+  analysisParams.value = JSON.parse(JSON.stringify(params));
   if (uploadedFilename.value) {
     analyzeSignal();
-  } else {
-    alert('Please upload a file first.');
   }
 };
+
+onMounted(() => {
+  // No need to do anything here anymore as sr is part of the main ref
+});
 
 const analyzeSignal = async () => {
   if (!uploadedFilename.value) return;
@@ -127,7 +156,15 @@ const analyzeSignal = async () => {
   try {
     // --- Trigger static image analysis ---
     const imageResponse = await axios.get(`http://localhost:5000/analyze/${uploadedFilename.value}`, {
-      params: analysisParams.value,
+      params: {
+        sr: analysisParams.value.sr,
+        spectrum_n_fft: analysisParams.value.spectrum.n_fft,
+        stft_n_fft: analysisParams.value.stft.n_fft,
+        hop_length: analysisParams.value.stft.hop_length,
+        win_length: analysisParams.value.stft.win_length,
+        window: analysisParams.value.stft.window,
+        cmap: analysisParams.value.stft.cmap,
+      }
     });
     const { waveform, spectrogram, spectrum } = imageResponse.data;
     analysisResults.waveform = `data:image/png;base64,${waveform}`;
@@ -157,7 +194,10 @@ const triggerSpectrumVideoAnalysis = async (runId: number) => {
       message: 'Queued',
       error: '',
     });
-    const videoResponse = await axios.post(`http://localhost:5000/analyze/spectrum_video/${uploadedFilename.value}`, analysisParams.value);
+    const videoResponse = await axios.post(`http://localhost:5000/analyze/spectrum_video/${uploadedFilename.value}`, {
+      sr: analysisParams.value.sr,
+      ...analysisParams.value.fft_animation
+    });
     const { task_id } = videoResponse.data;
     
     // Start polling for task status
@@ -173,6 +213,7 @@ const triggerSpectrumVideoAnalysis = async (runId: number) => {
   }
 };
 
+
 const triggerSpectrogramVideoAnalysis = async (runId: number) => {
   if (!uploadedFilename.value) return;
 
@@ -183,13 +224,14 @@ const triggerSpectrogramVideoAnalysis = async (runId: number) => {
       message: 'Queued',
       error: '',
     });
-    const { createStftAnimation } = await import('./api/signal');
-    const videoResponse = await createStftAnimation(uploadedFilename.value, analysisParams.value);
-    const { task_id } = videoResponse;
-    
+    const videoResponse = await axios.post(`http://localhost:5000/analyze/spectrogram_video/${uploadedFilename.value}`, {
+      sr: analysisParams.value.sr,
+      ...analysisParams.value.stft_animation
+    });
+    const { task_id } = videoResponse.data;
+
     // Start polling for task status
     pollTaskStatus(task_id, 'spectrogram', runId);
-
   } catch (error) {
     console.error('Error starting spectrogram video analysis:', error);
     setVideoTaskState('spectrogram', {
@@ -282,22 +324,23 @@ h1 {
 
 .main-layout {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 20px;
   padding: 20px;
+  align-items: stretch; /* Stretch items to fill the width */
 }
 
 .controls-panel {
-  flex: 1;
-  max-width: 300px;
   background-color: var(--light-blue-panel);
   padding: 20px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
+  width: 100%; /* Occupy full width */
+  max-width: none; /* Override previous max-width */
+  box-sizing: border-box; /* Ensure padding is included in width */
 }
 
 .plots-panel {
-  flex: 3;
   position: relative;
   min-height: 400px; /* Ensure it has some height */
   background-color: var(--light-blue-panel);
@@ -328,5 +371,4 @@ h1 {
   margin-top: 50px;
 }
 </style>
-
 

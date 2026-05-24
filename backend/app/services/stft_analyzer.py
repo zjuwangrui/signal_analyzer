@@ -12,12 +12,14 @@ def stft(
     fs: float,
     window_size: int,
     frame_shift: int | None = None,
+    window_type: str = "hann",
+    n_fft: int | None = None,
 ) -> tuple[FloatArray, FloatArray, ComplexArray]:
     """
-    Compute STFT with manual framing, rectangular windowing, and per-frame FFT.
+    Compute STFT with manual framing, windowing, and per-frame FFT.
 
     This mirrors the project-level ``stft_analyzer.py`` implementation:
-    no centered padding, full FFT output, and a rectangular analysis window.
+    no centered padding, full FFT output.
     ``frame_shift`` defaults to half-window overlap.
     """
     samples: FloatArray = np.asarray(signal, dtype=np.float64).reshape(-1)
@@ -30,14 +32,27 @@ def stft(
     if window_size > samples.size:
         raise ValueError("Window size must not exceed signal length.")
 
+    if n_fft is None:
+        n_fft = window_size
+    if n_fft <= 0:
+        raise ValueError("FFT size must be positive.")
+    if n_fft < window_size:
+        raise ValueError("FFT size must not be smaller than window size.")
+
     if frame_shift is None:
         frame_shift = max(window_size // 2, 1)
     if frame_shift <= 0:
         raise ValueError("Frame shift must be positive.")
 
-    nfft = window_size
+    nfft = n_fft
     num_frames = (samples.size - window_size) // frame_shift + 1
-    window = np.ones(window_size, dtype=np.float64)
+
+    # Get the specified window function
+    try:
+        window = np.get_window(window_type, window_size)
+    except ValueError:
+        print(f"Warning: Unsupported window type '{window_type}'. Using rectangular window.")
+        window = np.ones(window_size, dtype=np.float64)
 
     spectrum = np.zeros((nfft, num_frames), dtype=np.complex128)
     frequencies = np.arange(nfft, dtype=np.float64) * fs / nfft
