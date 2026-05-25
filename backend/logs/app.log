@@ -593,3 +593,4 @@ AttributeError: module 'numpy' has no attribute 'get_window'
 2026-05-25 01:02:04,550 - INFO - generated new fontManager
 2026-05-25 01:03:57,623 - INFO - generated new fontManager
 2026-05-25 02:18:42,786 - INFO - generated new fontManager
+2026-05-25 02:37:14,402 - INFO - generated new fontManager

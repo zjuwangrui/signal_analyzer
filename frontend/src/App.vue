@@ -31,6 +31,7 @@ import FileUpload from './components/FileUpload.vue';
 import AnalysisTabs from './components/AnalysisTabs.vue';
 import SettingsIcon from './components/SettingsIcon.vue';
 import SettingsDialog from './components/SettingsDialog.vue';
+import { API_BASE_URL, toAbsoluteApiUrl } from './api/signal';
 
 type VideoType = 'spectrum' | 'spectrogram';
 type VideoStatus = 'idle' | 'queued' | 'running' | 'success' | 'failed';
@@ -184,7 +185,7 @@ const analyzeSignal = async () => {
 
   try {
     // --- Trigger static image analysis ---
-    const imageResponse = await axios.get(`http://localhost:5000/analyze/${uploadedFilename.value}`, {
+    const imageResponse = await axios.get(`${API_BASE_URL}/analyze/${uploadedFilename.value}`, {
       params: {
         sr: analysisParams.value.sr,
         spectrum_n_fft: analysisParams.value.spectrum.n_fft,
@@ -223,7 +224,7 @@ const triggerSpectrumVideoAnalysis = async (runId: number) => {
       message: 'Queued',
       error: '',
     });
-    const videoResponse = await axios.post(`http://localhost:5000/analyze/spectrum_video/${uploadedFilename.value}`, {
+    const videoResponse = await axios.post(`${API_BASE_URL}/analyze/spectrum_video/${uploadedFilename.value}`, {
       sr: analysisParams.value.sr,
       ...analysisParams.value.fft_animation
     });
@@ -254,7 +255,7 @@ const triggerSpectrogramVideoAnalysis = async (runId: number) => {
       message: 'Queued',
       error: '',
     });
-    const videoResponse = await axios.post(`http://localhost:5000/analyze/spectrogram_video/${uploadedFilename.value}`, {
+    const videoResponse = await axios.post(`${API_BASE_URL}/analyze/spectrogram_video/${uploadedFilename.value}`, {
       sr: analysisParams.value.sr,
       ...analysisParams.value.stft_animation
     });
@@ -281,7 +282,7 @@ const pollTaskStatus = (taskId: string, videoType: VideoType, runId: number) => 
     }
 
     try {
-      const statusResponse = await axios.get(`http://localhost:5000/tasks/status/${taskId}`);
+      const statusResponse = await axios.get(`${API_BASE_URL}/tasks/status/${taskId}`);
       const { status, video_url, error, progress, message } = statusResponse.data;
       const normalizedStatus = status as VideoStatus;
       setVideoTaskState(videoType, {
@@ -292,7 +293,7 @@ const pollTaskStatus = (taskId: string, videoType: VideoType, runId: number) => 
 
       if (status === 'success') {
         clearInterval(interval);
-        const fullUrl = `http://localhost:5000${video_url}`;
+        const fullUrl = toAbsoluteApiUrl(video_url);
         setVideoTaskState(videoType, {
           url: fullUrl,
           status: 'success',

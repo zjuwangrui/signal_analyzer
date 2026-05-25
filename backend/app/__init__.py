@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 from config import Config
 from .utils.logging_config import setup_logging
@@ -8,7 +8,9 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 
 def create_app():
     """Create and configure an instance of the Flask application."""
-    app = Flask(__name__)
+    frontend_dist_dir = os.environ.get("FRONTEND_DIST_DIR")
+    static_folder = frontend_dist_dir if frontend_dist_dir and os.path.isdir(frontend_dist_dir) else None
+    app = Flask(__name__, static_folder=None)
     CORS(app)
     
     # Load configuration
@@ -28,5 +30,14 @@ def create_app():
     from .api.video import video_bp
     app.register_blueprint(signal_bp)
     app.register_blueprint(video_bp)
+
+    if static_folder:
+        @app.route("/", defaults={"path": ""})
+        @app.route("/<path:path>")
+        def serve_frontend(path: str):
+            requested_path = os.path.join(static_folder, path)
+            if path and os.path.isfile(requested_path):
+                return send_from_directory(static_folder, path)
+            return send_from_directory(static_folder, "index.html")
 
     return app
