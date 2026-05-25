@@ -2,13 +2,13 @@
   <div id="app">
     <header class="app-header">
       <h1>Signal Analyzer</h1>
-      <SettingsIcon @click="isSettingsOpen = true" />
     </header>
     <SettingsDialog :is-open="isSettingsOpen" :params="analysisParams" @close="isSettingsOpen = false"
       @update:params="onApplyParams" />
     <div class="main-layout">
       <div class="controls-panel">
         <FileUpload @upload-success="onUploadSuccess" />
+        <SettingsIcon @click="isSettingsOpen = true" />
       </div>
       <div class="plots-panel">
         <div v-if="isLoading" class="loading-overlay">
@@ -329,6 +329,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   margin-top: 40px;
+}
+
+.app-header {
+  text-align: center;
+  display:block;
 }
 
 h1 {

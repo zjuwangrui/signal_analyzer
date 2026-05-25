@@ -9,21 +9,18 @@
       </div>
       <div class="tab-content">
         <div v-if="activeTab === 'waveform'">
-          <p>No specific parameters to configure for the waveform plot.</p>
-<div class="form-group">
+            <div class="form-group">
             <label for="sr">Sample Rate (sr)</label>
             <input id="sr" type="number" v-model.number="editableParams.sr">
           </div>
         </div>
         <div v-if="activeTab === 'spectrum'">
-          <h3>Spectrum Settings</h3>
           <div class="form-group">
             <label for="spectrum_n_fft">N-FFT</label>
             <input id="spectrum_n_fft" type="number" v-model.number="editableParams.spectrum.n_fft">
           </div>
         </div>
         <div v-if="activeTab === 'stft'">
-          <h3>STFT Settings</h3>
           <div class="form-group">
             <label for="n_fft">N-FFT</label>
             <input id="n_fft" type="number" v-model.number="editableParams.stft.n_fft">
@@ -50,14 +47,12 @@
           </div>
         </div>
         <div v-if="activeTab === 'fft_animation'">
-           <h3>FFT Animation Settings</h3>
            <div class="form-group">
             <label for="fft_n_fft">N-FFT</label>
             <input id="fft_n_fft" type="number" v-model.number="editableParams.fft_animation.n_fft">
           </div>
         </div>
          <div v-if="activeTab === 'stft_animation'">
-           <h3>STFT Animation Settings</h3>
            <div class="form-group">
             <label for="stft_anim_n_fft">N-FFT</label>
             <input id="stft_anim_n_fft" type="number" v-model.number="editableParams.stft_animation.n_fft">
@@ -134,7 +129,6 @@ const save = () => {
   background-color: #2a2a2a;
   padding: 2rem;
   border-radius: 8px;
-  width: 500px;
   max-width: 90%;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }

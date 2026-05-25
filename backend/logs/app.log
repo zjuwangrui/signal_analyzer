@@ -585,3 +585,7 @@ AttributeError: module 'numpy' has no attribute 'get_window'
 2026-05-24 03:26:13,682 - INFO - Muxed animation video saved to: /app/animations/self_songbie_f7de300536654882b10aa9061412074c_stft.mp4
 2026-05-24 03:26:13,683 - INFO - STFT animation with audio saved to: /app/animations/self_songbie_f7de300536654882b10aa9061412074c_stft.mp4
 2026-05-24 03:26:13,693 - INFO - Task ddbb8b2c-e745-4465-afa5-c71fe9ce5930 for function create_spectrogram_animation completed.
+2026-05-25 00:11:11,677 - INFO - generated new fontManager
+2026-05-25 00:13:42,936 - INFO - generated new fontManager
+2026-05-25 00:15:51,468 - INFO - generated new fontManager
+2026-05-25 00:18:42,738 - INFO - generated new fontManager
