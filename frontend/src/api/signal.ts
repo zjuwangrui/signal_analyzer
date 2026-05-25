@@ -6,6 +6,8 @@ export interface AnimationParams {
   sr?: number;
   n_fft?: number;
   hop_length?: number;
+  win_length?: number;
+  window?: string;
   cmap?: string;
   frame_nums?: number;
   render_fps?: number;

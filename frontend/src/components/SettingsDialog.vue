@@ -13,6 +13,7 @@
             <label for="sr">Sample Rate (sr)</label>
             <input id="sr" type="number" v-model.number="editableParams.sr">
           </div>
+          <p class="hint">(注：该采样率是所有图片和动画生成的共用参数)</p>
         </div>
         <div v-if="activeTab === 'spectrum'">
           <div class="form-group">
@@ -34,7 +35,7 @@
             <input id="win_length" type="number" v-model.number="editableParams.stft.win_length">
           </div>
            <div class="form-group">
-            <label for="window">Window</label>
+            <label for="window">Window Type</label>
             <select id="window" v-model="editableParams.stft.window">
               <option v-for="win in windowOptions" :key="win" :value="win">{{ win }}</option>
             </select>
@@ -60,6 +61,34 @@
            <div class="form-group">
             <label for="stft_anim_hop_length">Hop Length</label>
             <input id="stft_anim_hop_length" type="number" v-model.number="editableParams.stft_animation.hop_length">
+          </div>
+          <div class="form-group">
+            <label for="stft_anim_win_length">Window Length</label>
+            <input id="stft_anim_win_length" type="number" v-model.number="editableParams.stft_animation.win_length">
+          </div>
+          <div class="form-group">
+            <label for="stft_anim_window">Window Type</label>
+            <select id="stft_anim_window" v-model="editableParams.stft_animation.window">
+              <option v-for="win in windowOptions" :key="win" :value="win">{{ win }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="stft_anim_cmap">Colormap</label>
+            <select id="stft_anim_cmap" v-model="editableParams.stft_animation.cmap">
+              <option v-for="c in cmapOptions" :key="c" :value="c">{{ c }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="stft_anim_frame_nums">Frame Nums</label>
+            <input id="stft_anim_frame_nums" type="number" v-model.number="editableParams.stft_animation.frame_nums">
+          </div>
+          <div class="form-group">
+            <label for="stft_anim_render_fps">Render FPS</label>
+            <input id="stft_anim_render_fps" type="number" step="0.1" v-model.number="editableParams.stft_animation.render_fps">
+          </div>
+          <div class="form-group">
+            <label for="stft_anim_max_video_frames">Max Video Frames</label>
+            <input id="stft_anim_max_video_frames" type="number" v-model.number="editableParams.stft_animation.max_video_frames">
           </div>
         </div>
       <div class="dialog-actions">
@@ -208,5 +237,12 @@ button {
 button.primary {
   background-color: #42b983;
   color: white;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
 }
 </style>

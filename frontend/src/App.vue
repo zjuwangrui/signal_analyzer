@@ -57,6 +57,12 @@ const analysisParams = ref({
   stft_animation: {
     n_fft: 2048,
     hop_length: 512,
+    win_length: 2048,
+    window: 'hann',
+    cmap: 'viridis',
+    frame_nums: 10,
+    render_fps: 12,
+    max_video_frames: 900,
   }
 });
 const analysisResults = reactive({

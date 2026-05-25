@@ -24,6 +24,8 @@ class AnimationParams(TypedDict):
     sr: int
     n_fft: int
     hop_length: int
+    win_length: int
+    window: str
     cmap: str
     frame_nums: int
     render_fps: float
@@ -37,7 +39,9 @@ def create_spectrogram_animation(
     sr: int = 22050,
     n_fft: int = 2048,
     hop_length: int = 512,
-    cmap: str = "magma",
+    win_length: int = 2048,
+    window: str = "hann",
+    cmap: str = "viridis",
     frame_nums: int = 10,
     render_fps: float = 12.0,
     max_video_frames: int = 900,
@@ -50,8 +54,16 @@ def create_spectrogram_animation(
         raise ValueError("n_fft must be positive.")
     if hop_length <= 0:
         raise ValueError("hop_length must be positive.")
+    if win_length <= 0:
+        raise ValueError("win_length must be positive.")
+    if n_fft < win_length:
+        raise ValueError("n_fft must not be smaller than win_length.")
     if frame_nums <= 0:
         raise ValueError("frame_nums must be positive.")
+    if render_fps <= 0:
+        raise ValueError("render_fps must be positive.")
+    if max_video_frames <= 0:
+        raise ValueError("max_video_frames must be positive.")
 
     if progress_callback:
         progress_callback(0.02, "Loading audio")
@@ -68,8 +80,10 @@ def create_spectrogram_animation(
     frequencies, _, stft_result = manual_stft(
         y,
         float(sr),
-        window_size=n_fft,
+        window_size=win_length,
         frame_shift=hop_length,
+        window_type=window,
+        n_fft=n_fft,
     )
     positive_bin_count = n_fft // 2 + 1
     positive_frequencies = frequencies[:positive_bin_count]
@@ -77,9 +91,11 @@ def create_spectrogram_animation(
     D = librosa.amplitude_to_db(stft_magnitude, ref=np.max)
     max_frequency = float(positive_frequencies[-1])
     logging.info(
-        "Computed STFT animation data with n_fft=%s, hop_length=%s. Result shape: %s",
+        "Computed STFT animation data with n_fft=%s, hop_length=%s, win_length=%s, window=%s. Result shape: %s",
         n_fft,
         hop_length,
+        win_length,
+        window,
         stft_magnitude.shape,
     )
 

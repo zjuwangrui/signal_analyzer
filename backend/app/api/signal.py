@@ -58,11 +58,14 @@ def get_float_query_param(name: str, default: float) -> float:
 
 def build_animation_params() -> AnimationParams:
     """Read animation parameters from the query string."""
+    n_fft = get_int_query_param("n_fft", 2048)
     return {
         "sr": get_int_query_param("sr", 22050),
-        "n_fft": get_int_query_param("n_fft", 2048),
+        "n_fft": n_fft,
         "hop_length": get_int_query_param("hop_length", 512),
-        "cmap": get_str_query_param("cmap", "magma"),
+        "win_length": get_int_query_param("win_length", n_fft),
+        "window": get_str_query_param("window", "hann"),
+        "cmap": get_str_query_param("cmap", "viridis"),
         "frame_nums": get_int_query_param("frame_nums", 10),
         "render_fps": get_float_query_param("render_fps", 12.0),
         "max_video_frames": get_int_query_param("max_video_frames", 900),
@@ -149,6 +152,10 @@ def animate_signal_route(filename: str):
             return jsonify({"error": "n_fft must be positive"}), 400
         if params["hop_length"] <= 0:
             return jsonify({"error": "hop_length must be positive"}), 400
+        if params["win_length"] <= 0:
+            return jsonify({"error": "win_length must be positive"}), 400
+        if params["n_fft"] < params["win_length"]:
+            return jsonify({"error": "n_fft must not be smaller than win_length"}), 400
         if params["frame_nums"] <= 0:
             return jsonify({"error": "frame_nums must be positive"}), 400
         if params["render_fps"] <= 0:
@@ -167,6 +174,8 @@ def animate_signal_route(filename: str):
             sr=params["sr"],
             n_fft=params["n_fft"],
             hop_length=params["hop_length"],
+            win_length=params["win_length"],
+            window=params["window"],
             cmap=params["cmap"],
             frame_nums=params["frame_nums"],
             render_fps=params["render_fps"],
