@@ -53,6 +53,17 @@ const analysisParams = ref({
   },
   fft_animation: {
     n_fft: 2048,
+    hop_length: 512,
+    cmap: 'magma',
+    rain_drop_count: 120,
+    rain_cmap: 'hsv',
+    rain_length_min: 4,
+    rain_length_max: 12,
+    rain_width_min: 1.5,
+    rain_width_max: 3.5,
+    rain_alpha: 0.8,
+    render_fps: 12,
+    max_video_frames: 900,
   },
   stft_animation: {
     n_fft: 2048,

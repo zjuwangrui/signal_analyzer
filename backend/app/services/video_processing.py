@@ -14,6 +14,20 @@ from matplotlib.collections import LineCollection
 from .audio_muxing import mux_audio_track
 from .animation_rendering import build_frame_schedule
 
+def _get_int_param(params: dict, name: str, default: int) -> int:
+    value = params.get(name, default)
+    if value in (None, ""):
+        return default
+    return int(value)
+
+
+def _get_float_param(params: dict, name: str, default: float) -> float:
+    value = params.get(name, default)
+    if value in (None, ""):
+        return default
+    return float(value)
+
+
 def _build_rainbow_rain_segments(
     rng: np.random.Generator,
     min_frequency: float,
@@ -23,14 +37,20 @@ def _build_rainbow_rain_segments(
     config: dict
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Generate one frame of decorative rainbow rain segments."""
-    drop_count = config.get('rain_drop_count', 120)
+    drop_count = _get_int_param(config, 'rain_drop_count', 120)
+    rain_length_min = _get_float_param(config, 'rain_length_min', 4.0)
+    rain_length_max = _get_float_param(config, 'rain_length_max', 12.0)
+    rain_width_min = _get_float_param(config, 'rain_width_min', 1.5)
+    rain_width_max = _get_float_param(config, 'rain_width_max', 3.5)
+    rain_cmap = config.get('rain_cmap', 'hsv')
+
     log_x = rng.uniform(np.log10(min_frequency), np.log10(max_frequency), drop_count)
     x_positions = np.power(10.0, log_x)
     y_starts = rng.uniform(min_db, max_db, drop_count)
-    lengths = rng.uniform(config.get('rain_length_min', 4.0), config.get('rain_length_max', 12.0), drop_count)
+    lengths = rng.uniform(rain_length_min, rain_length_max, drop_count)
     y_ends = np.maximum(y_starts - lengths, min_db)
-    colors = plt.cm.hsv(rng.random(drop_count))
-    widths = rng.uniform(config.get('rain_width_min', 1.5), config.get('rain_width_max', 3.5), drop_count)
+    colors = plt.get_cmap(rain_cmap)(rng.random(drop_count))
+    widths = rng.uniform(rain_width_min, rain_width_max, drop_count)
     segments = np.stack(
         (
             np.column_stack((x_positions, y_starts)),
@@ -51,19 +71,36 @@ def create_spectrum_animation(
     """Render a frame-wise FFT spectrum animation with the source audio track."""
     os.makedirs(output_dir, exist_ok=True)
 
-    sr = int(params.get('sr', 22050))
-    n_fft = int(params.get('n_fft', 2048))
-    hop_length = int(params.get('hop_length', 512))
+    sr = _get_int_param(params, 'sr', 22050)
+    n_fft = _get_int_param(params, 'n_fft', 2048)
+    hop_length = _get_int_param(params, 'hop_length', 512)
     cmap = params.get('cmap', 'magma')
     fig_size = params.get('fig_size', (12, 7))
-    rain_alpha = float(params.get('rain_alpha', 0.8))
-    render_fps = float(params.get('render_fps', 12.0))
-    max_video_frames = int(params.get('max_video_frames', 900))
+    rain_drop_count = _get_int_param(params, 'rain_drop_count', 120)
+    rain_length_min = _get_float_param(params, 'rain_length_min', 4.0)
+    rain_length_max = _get_float_param(params, 'rain_length_max', 12.0)
+    rain_width_min = _get_float_param(params, 'rain_width_min', 1.5)
+    rain_width_max = _get_float_param(params, 'rain_width_max', 3.5)
+    rain_alpha = _get_float_param(params, 'rain_alpha', 0.8)
+    render_fps = _get_float_param(params, 'render_fps', 12.0)
+    max_video_frames = _get_int_param(params, 'max_video_frames', 900)
 
     if n_fft <= 0:
         raise ValueError("n_fft must be positive.")
     if hop_length <= 0:
         raise ValueError("hop_length must be positive.")
+    if rain_drop_count < 0:
+        raise ValueError("rain_drop_count must not be negative.")
+    if rain_length_min < 0 or rain_length_max < 0:
+        raise ValueError("rain length values must not be negative.")
+    if rain_length_min > rain_length_max:
+        raise ValueError("rain_length_min must not exceed rain_length_max.")
+    if rain_width_min < 0 or rain_width_max < 0:
+        raise ValueError("rain width values must not be negative.")
+    if rain_width_min > rain_width_max:
+        raise ValueError("rain_width_min must not exceed rain_width_max.")
+    if not 0 <= rain_alpha <= 1:
+        raise ValueError("rain_alpha must be between 0 and 1.")
 
     if progress_callback:
         progress_callback(0.02, "Loading audio")

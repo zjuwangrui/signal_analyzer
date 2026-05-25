@@ -9,6 +9,13 @@ export interface AnimationParams {
   win_length?: number;
   window?: string;
   cmap?: string;
+  rain_drop_count?: number;
+  rain_cmap?: string;
+  rain_length_min?: number;
+  rain_length_max?: number;
+  rain_width_min?: number;
+  rain_width_max?: number;
+  rain_alpha?: number;
   frame_nums?: number;
   render_fps?: number;
   max_video_frames?: number;
